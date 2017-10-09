@@ -1,0 +1,297 @@
+ <!DOCTYPE html>
+<html>
+    <head>
+    
+            <title>
+            跳马
+            </title>
+            
+    </head>
+            <body>
+                <table width="100%" height="200px" border="1.5">
+                    <caption>
+                        跳马
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th>
+                                棋盘行数m
+                            </th>
+                            <th>棋盘列数n</th>
+                            <th>马初始位置x坐标(行号从0开始)</th>
+                            <th>马初始位置y坐标(列号从0开始)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>5</td>
+                            <td>5</td>
+                            <td>
+                                <br>
+                                <select name="number1" size="1" id="xx" >
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                </select></br>                       
+                             </td>
+                            <td>
+                                <br>
+                                <select name="number2" size="1" id="yy">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                 </select></br>                  
+                            </td>                  
+                        </tr>
+                        <tr>
+                            <td rowpan="3" colspan="4">   
+                             <button type="button" name="button" onclick="tiaoma()">
+                              <b>计算</b>
+                             </button> </br>
+                                                       
+                                    
+                            </td>
+                        </tr>
+                        <div name="result">
+                            <td rowpan="3" colspan="4">最终结果为：</td>
+                        </div>
+                      </tbody>
+                    <tfoot>
+
+                    </tfoot>
+                </table>
+               
+</body>
+            
+
+            <script type="text/javascript">
+                var xmax=5;
+                var xmin=0;
+                var ymax=5;
+                var ymin=0;   //5*5大小的棋盘
+
+
+                var trail=new Array(); //记录棋子访问路径
+                var stack=new Array(); //存储访问过程
+     
+                var x1=0,y1=0; //棋子初始位置
+                var variety=0; //记录不同路径的种类数
+
+                function inChess(x,y,result)        //判断棋子位置
+                {
+                    //var x=document.getElementById("xx").value;
+                    //var y=document.getElementById("yy").value;
+                  if(x<xmin || x>ymax || y<ymin || y>ymax)
+                  {
+                      return result=0;          //在棋盘外
+                      alert("不符合要求！");
+                  }
+                  else
+                  {
+                      return result=1;        //在棋盘内
+                  }
+                }
+
+                function point(x,y)
+                {
+                    x=this.x;
+                    y=this.y;
+                }
+
+                function track(stack,x,y,result)  //在表中遍历，判断是否可以入栈
+                {
+                    //var x=document.getElementById("xx").value;
+                    //var y=document.getElementById("yy").value;
+                    var top=0;  //遍历的指针
+                    while (stack[top]!=null)
+                    {
+                       if((x=stack[0].x) && (y=stack[0].y)) //回到起点
+                       {
+                           result=2;
+                           break;
+                       }
+                       else if((x=stack[top].x) && (y=stack[top].y))  //走到重复点
+                       {
+                           result=1;
+                           break;                         
+                       }
+                       top++;
+                       if(stack[top]==null)
+                       {
+                           result=0;  //可以入栈
+                       }
+                    }
+                }
+
+                function inStack(x,y) //入栈
+                {
+                    //var x=document.getElementById("xx").value;
+                    //var y=document.getElementById("yy").value;
+                    var top=0;
+                    while(stack[top]!=null)
+                    {
+                        top++;
+                    }
+                    stack[top].x=x;
+                    stack[top].y=y;
+                }
+
+                function nextstep(x,y,stack,result)
+                {
+                    //var x=document.getElementById("xx").value;
+                    //var y=document.getElementById("yy").value;
+                    var result1=0;  //是否在棋盘内部
+                    var result2=0;  //是否遍历过
+                                    //八条路径
+                    //路径1，左上1
+                    x=x-2;y=y+1;
+                    inChess(x,y,result1);
+                    track(stack,x,y,result2);
+                    
+                    if(result1==1 && result2==0)
+                    {
+                        inStack(x,y);
+                        return 0;
+                    }
+                    else if(result2==2)  //回到起点
+                    {
+                        result=4;
+                        return 0;
+                    }
+
+                    //路径2，左上2
+                    x=x-1;y=y+2;
+                    inChess(x,y,result1);
+                    track(stack,x,y,result2);
+                    if(result1==1 && result2==0)
+                    {
+                        inStack(x,y);
+                        return 0;
+                    }
+                    else if(result2==2)  //回到起点
+                    {
+                        result=4;
+                        return 0;
+                    }
+
+                    //路径3，右上1
+                    x=x+1;y=y+2;
+                    inChess(x,y,result1);
+                    track(stack,x,y,result2);
+                    if(result1==1 && result2==0)
+                    {
+                        inStack(x,y);
+                        return 0;
+                    }
+                    else if(result2==2)  //回到起点
+                    {
+                        result=4;
+                        return 0;
+                    }
+
+                    //路径4，右上2
+                    x=x+2;y=y+1;
+                    inChess(x,y,result1);
+                    track(stack,x,y,result2);
+                    if(result1==1 && result2==0)
+                    {
+                        inStack(x,y);
+                        return 0;
+                    }
+                    else if(result2==2)  //回到起点
+                    {
+                        result=4;
+                        return 0;
+                    }
+
+                    //路径5，右下1
+                    x=x+2;y=y-1;
+                    inChess(x,y,result1);
+                    track(stack,x,y,result2);
+                    if(result1==1 && result2==0)
+                    {
+                        inStack(x,y);
+                        return 0;
+                    }
+                    else if(result2==2)  //回到起点
+                    {
+                        result=4;
+                        return 0;
+                    }
+
+                    //路径6，右下2
+                    x=x+1;y=y-2;
+                    inChess(x,y,result1);
+                    track(stack,x,y,result2);
+                    if(result1==1 && result2==0)
+                    {
+                        inStack(x,y);
+                        return 0;
+                    }
+                    else if(result2==2)  //回到起点
+                    {
+                        result=4;
+                        return 0;
+                    }
+
+                    //路径7，左下1
+                    x=x-1;y=y-2;
+                    inChess(x,y,result1);
+                    track(stack,x,y,result2);
+                    if(result1==1 && result2==0)
+                    {
+                        inStack(x,y);
+                        return 0;
+                    }
+                    else if(result2==2)  //回到起点
+                    {
+                        result=4;
+                        return 0;
+                    }
+
+                    //路径8，左下2
+                    x=x-2;y=y-1;
+                    inChess(x,y,result1);
+                    track(stack,x,y,result2);
+                    if(result1==1 && result2==0)
+                    {
+                        inStack(x,y);
+                        return 0;
+                    }
+                    else if(result2==2)  //回到起点
+                    {
+                        result=4;
+                        return 0;
+                    }
+                    
+                    function tiaoma()
+                    {
+                    
+                        var result=0;
+                      var x=document.getElementById("xx").value;
+                    var y=document.getElementById("yy").value;
+                        
+                        while(result!=4)
+                        {
+                            nextstep(x,y,stack,result);
+                        }
+                       
+                        document.getElementById('result').innerHTML +=stack;
+                    }
+                }
+                
+            </script>
+            
+            
+
+
+</html>
+
