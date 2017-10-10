@@ -2,16 +2,25 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>hello canvas!</title>
- <script type="text/javascript" src="canvas.js">
+<title>hellocanvas</title>
+ <script >
+ var c=document.getElementById("myCanvas");
+var ctx=c.getContext("2d");
+ctx.strokeStyle="#6060B6";
+ctx.strokeRect(20,50,500,300);
+
+
+ctx.beginPath();
+ctx.lineWidth=2;
+ctx.lineCap="butt";
+ctx.strokeStyle="#000000";
+ctx.moveTo(400,400);
+ctx.lineTo(20,30);
+ctx.stroke();
 </script>
 </head>
 <body>
        <div class="bg">
-                  <div class="bg-right">
-                              <canvas id="canv" width="800px" height="440px"></canvas>
-                  </div>
-                  <input type="text" name="t3" value="440">
                   <p>请选择形状</p>
                   <select name="s1">
                   <option>直线</option>
@@ -21,6 +30,8 @@
                   <p></p>
             </div>
       </div>
+      <canvas id="myCanvas" width="800" height="800" style="border:1px solid #6060B6;">
+      </canvas>
       </body>
  </html>
  
