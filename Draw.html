@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Draw(Draw.com)</title>
+</head>
+<body>
+
+<canvas id="myCanvas" width="800" height="800" style="border:1px solid #6060B6;">
+</canvas>
+<script>
+var c=document.getElementById("myCanvas");
+var ctx=c.getContext("2d");
+ctx.strokeStyle="#FF0000";
+ctx.strokeRect(20,50,500,300);
+
+
+ctx.beginPath();
+ctx.lineWidth=2;
+ctx.lineCap="butt";
+ctx.strokeStyle="#000000";
+ctx.moveTo(500,400);
+ctx.lineTo(20,30);
+ctx.stroke();
+</script> 
+
+</body>
+</html>
