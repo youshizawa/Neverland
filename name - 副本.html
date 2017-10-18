@@ -6,24 +6,22 @@
         <script type="text/javascript"></script>
     
     <body>
-        <div>
-            <div >
-            <p >请选择您的文件</p>
+
+            <p>请选择姓名文件</p>
             <input type="file" id="filepick">
-            <input type="button" value="生成图像" onclick="readfile()">
-            </div>
+            <input type="button" value="生成图案" onclick="readfile()">
             <div class="bg-right">
-                <canvas id="canv" width="1080px" height="720px"></canvas>
+                <canvas id="demo" width="1080px" height="720px"></canvas>
             </div>
         </div>
-    
+
     <script type="text/javascript">
-        function Point(x,y)
+
+         function Point(x,y)
         {
             this.x=x;
             this.y=y;
         }
-        
         function readfile()
         {   
             
@@ -33,10 +31,9 @@
             reader.onload=function(e)
             {   
                 var text=reader.result.split("\r\n");
-           
-                var string=new Array();
+                var Lines=new Array();
                 var N=0;
-                string[N]=new Array();
+                Lines[N]=new Array();
         
                 var l=text.length;
                 var judge=0;
@@ -51,7 +48,7 @@
                         var y;
                         x=text[i].split(",")[0];
                         y=text[i].split(",")[1];
-                        string[N][judge]=new Point(x,y);
+                        Lines[N][judge]=new Point(x,y);
                         judge=judge+1;
                         }
                     }
@@ -59,20 +56,20 @@
                     {
                         judge=0;
                         N=N+1;
-                        string[N]=new Array();
+                        Lines[N]=new Array();
                     }
                 }
-                var canvas = document.getElementById("canv");
+                var canvas = document.getElementByid("demo");
                 var cxt = canvas.getContext("2d");
                 cxt.beginPath();
-                cxt.lineWidth = 2;
+                cxt.lineWLinesth = 5;
                 for(i=0;i<N+1;i++)
-                {
-                    for(j=0;j<string[i].length-1;j++)
+                { 
+                    for(j=0;j<Lines[i].length-1;j++)
                     {
                          
-                        cxt.moveTo((string[i][j].x)*10,(string[i][j].y)*10);
-                        cxt.lineTo((string[i][j+1].x)*10,(string[i][j+1].y)*10);
+                        cxt.moveTo((Lines[i][j].x)*10,(Lines[i][j].y)*10);
+                        cxt.lineTo((Lines[i][j+1].x)*10,(Lines[i][j+1].y)*10);
                         
                     }
                 }

@@ -8,17 +8,216 @@
 </head>
   
 <script>
-var NJob=function()
-{
-    var JobId;
-    var TimeNeeded;
-    var DeadTime;
-    var Value;
-}
-function funArrayList() {
+Bridge.assembly("Demo", function ($asm, globals) {
+    "use strict";
+
+    Bridge.define("JobFinshedValue.FindMaxValue", {
+        statics: {
+            methods: {
+                InitialList: function (JobId, TimeNeeded, DeadTime, Value) {
+
+                    var JobInfo = new (System.Collections.Generic.List$1(JobFinshedValue.FindMaxValue.NJob)).ctor();
+                    var job = System.Array.init(JobId.length, function (){
+                        return new JobFinshedValue.FindMaxValue.NJob();
+                    }, JobFinshedValue.FindMaxValue.NJob);
+
+                    for (var i = 0; i < JobId.length; i = (i + 1) | 0) {
+                        job[System.Array.index(i, job)].JobId = JobId[System.Array.index(i, JobId)];
+                        job[System.Array.index(i, job)].TimeNeeded = TimeNeeded[System.Array.index(i, TimeNeeded)];
+                        job[System.Array.index(i, job)].DeadTime = DeadTime[System.Array.index(i, DeadTime)];
+                        job[System.Array.index(i, job)].Value = Value[System.Array.index(i, Value)];
+                    }
+                    JobInfo.addRange(job);
+                    return JobInfo;
+                },
+                GetBestOrder: function (JobInfo, NextJob, BestOrder, SumTime) {
+                    //满足所有工作进入BestOrder栈后，函数结束
+                    if (JobInfo.Count === 0) {
+                        return;
+                    }
+                    //如果NextJob组为空时，进行出栈操作，JobInfo中加入对应的数据，并使SumTime减去对应的值，更新NextJob
+                    if (NextJob.Count === 0) {
+                        var Popjob = new JobFinshedValue.FindMaxValue.NJob();
+                        Popjob = BestOrder.pop().$clone();
+                        JobInfo.add(Popjob.$clone());
+                        SumTime = (SumTime - Popjob.TimeNeeded) | 0;
+                        NextJob = JobFinshedValue.FindMaxValue.FindNextJob(NextJob, Popjob.$clone(), JobInfo);
+                        JobFinshedValue.FindMaxValue.GetBestOrder(JobInfo, NextJob, BestOrder, SumTime);
+                    } else {
+                        //查找其中价值最大中序号最小的工作
+                        var MaxValueJob = JobFinshedValue.FindMaxValue.FindMaxValueJob(NextJob);
+                        //如果该工作满足最后期限要求，将工作放入BestOrder栈中，同时在JobInfo中去除该工作，更新NextJob.
+                        if (((SumTime + MaxValueJob.TimeNeeded) | 0) <= MaxValueJob.DeadTime) {
+                            SumTime = (SumTime + MaxValueJob.TimeNeeded) | 0;
+                            BestOrder.push(MaxValueJob.$clone());
+                            JobInfo.remove(MaxValueJob.$clone());
+                            var job = System.Array.init(JobInfo.Count, function (){
+                                return new JobFinshedValue.FindMaxValue.NJob();
+                            }, JobFinshedValue.FindMaxValue.NJob);
+                            for (var i = 0; i < JobInfo.Count; i = (i + 1) | 0) {
+                                job[System.Array.index(i, job)].JobId = JobInfo.getItem(i).$clone().JobId;
+                                job[System.Array.index(i, job)].TimeNeeded = JobInfo.getItem(i).$clone().TimeNeeded;
+                                job[System.Array.index(i, job)].DeadTime = JobInfo.getItem(i).$clone().DeadTime;
+                                job[System.Array.index(i, job)].Value = JobInfo.getItem(i).$clone().Value;
+                            }
+                            NextJob.clear();
+                            NextJob.addRange(job);
+                        } else {
+                            NextJob.remove(MaxValueJob.$clone());
+                        }
+                        JobFinshedValue.FindMaxValue.GetBestOrder(JobInfo, NextJob, BestOrder, SumTime);
+                    }
+
+                },
+                FindMaxValueJob: function (JobInfo) {
+                    //查找工作序列中价值最大的工作
+                    var MaxValue = new JobFinshedValue.FindMaxValue.NJob();
+                    MaxValue = JobInfo.getItem(0).$clone();
+                    for (var i = 0; i < JobInfo.Count; i = (i + 1) | 0) {
+                        if (JobInfo.getItem(i).$clone().Value > MaxValue.Value) {
+                            MaxValue = JobInfo.getItem(i).$clone();
+                        }
+                    }
+                    //查找与最大价值相等的工作，并将其中序号最小的工作赋给MaxValue
+                    for (var i1 = 0; i1 < JobInfo.Count; i1 = (i1 + 1) | 0) {
+                        if (MaxValue.Value === JobInfo.getItem(i1).$clone().Value && MaxValue.JobId > JobInfo.getItem(i1).$clone().JobId) {
+                            MaxValue = JobInfo.getItem(i1).$clone();
+                        }
+
+                    }
+                    return MaxValue.$clone();
+
+                },
+                FindNextJob: function (NextJob, PopJOb, JObInfo) {
+                    var job = System.Array.init(JObInfo.Count, function (){
+                        return new JobFinshedValue.FindMaxValue.NJob();
+                    }, JobFinshedValue.FindMaxValue.NJob);
+                    for (var i = 0; i < JObInfo.Count; i = (i + 1) | 0) {
+                        if (JObInfo.getItem(i).$clone().Value <= PopJOb.Value && PopJOb.JobId < JObInfo.getItem(i).$clone().JobId) {
+                            job[System.Array.index(i, job)].JobId = JObInfo.getItem(i).$clone().JobId;
+                            job[System.Array.index(i, job)].TimeNeeded = JObInfo.getItem(i).$clone().TimeNeeded;
+                            job[System.Array.index(i, job)].DeadTime = JObInfo.getItem(i).$clone().DeadTime;
+                            job[System.Array.index(i, job)].Value = JObInfo.getItem(i).$clone().Value;
+                            NextJob.add(job[System.Array.index(i, job)].$clone());
+                        }
+
+                    }
+
+                    return NextJob;
+
+                }
+            }
+        }
+    });
+
+    Bridge.define("JobFinshedValue.FindMaxValue.NJob", {
+        $kind: "struct",
+        statics: {
+            methods: {
+                getDefaultValue: function () { return new JobFinshedValue.FindMaxValue.NJob(); }
+            }
+        },
+        fields: {
+            JobId: 0,
+            TimeNeeded: 0,
+            DeadTime: 0,
+            Value: 0
+        },
+        ctors: {
+            ctor: function () {
+                this.$initialize();
+            }
+        },
+        methods: {
+            getHashCode: function () {
+                var h = Bridge.addHash([1651460686, this.JobId, this.TimeNeeded, this.DeadTime, this.Value]);
+                return h;
+            },
+            equals: function (o) {
+                if (!Bridge.is(o, JobFinshedValue.FindMaxValue.NJob)) {
+                    return false;
+                }
+                return Bridge.equals(this.JobId, o.JobId) && Bridge.equals(this.TimeNeeded, o.TimeNeeded) && Bridge.equals(this.DeadTime, o.DeadTime) && Bridge.equals(this.Value, o.Value);
+            },
+            $clone: function (to) {
+                var s = to || new JobFinshedValue.FindMaxValue.NJob();
+                s.JobId = this.JobId;
+                s.TimeNeeded = this.TimeNeeded;
+                s.DeadTime = this.DeadTime;
+                s.Value = this.Value;
+                return s;
+            }
+        }
+    });
+
+    Bridge.define("JobFinshedValue.Program", {
+        main: function Main (args) {
+            //输入工作信息。
+            var JobId = System.Array.init([
+                1, 
+                2, 
+                3, 
+                4
+            ], System.Int32);
+            var TimeNeeded = System.Array.init([
+                4, 
+                3, 
+                2, 
+                1
+            ], System.Int32);
+            var DeadTime = System.Array.init([
+                10, 
+                8, 
+                4, 
+                2
+            ], System.Int32);
+            var Value = System.Array.init([
+                2, 
+                3, 
+                3, 
+                6
+            ], System.Int32);
+            //初始化工作信息组
+            var JobInfo = JobFinshedValue.FindMaxValue.InitialList(JobId, TimeNeeded, DeadTime, Value);
+            //构建下一个最佳工作查找组
+            var NextJob = new (System.Collections.Generic.List$1(JobFinshedValue.FindMaxValue.NJob)).ctor();
+            //构建最佳工作序列栈
+            var BestOrder = new (System.Collections.Generic.Stack$1(JobFinshedValue.FindMaxValue.NJob)).ctor();
+            //初始化最佳工作序列查找组
+            var job = System.Array.init(JobInfo.Count, function (){
+                return new JobFinshedValue.FindMaxValue.NJob();
+            }, JobFinshedValue.FindMaxValue.NJob);
+            for (var i = 0; i < JobInfo.Count; i = (i + 1) | 0) {
+                job[System.Array.index(i, job)].JobId = JobInfo.getItem(i).$clone().JobId;
+                job[System.Array.index(i, job)].TimeNeeded = JobInfo.getItem(i).$clone().TimeNeeded;
+                job[System.Array.index(i, job)].DeadTime = JobInfo.getItem(i).$clone().DeadTime;
+                job[System.Array.index(i, job)].Value = JobInfo.getItem(i).$clone().Value;
+            }
+            NextJob.clear();
+            NextJob.addRange(job);
+            //初始化工作时间总和SumTime
+            var SumTime = 0;
+            //求取最佳工作序列
+            JobFinshedValue.FindMaxValue.GetBestOrder(JobInfo, NextJob, BestOrder, SumTime);
+            //输出最佳工作序列
+            var Result = System.Linq.Enumerable.from(BestOrder).toList(JobFinshedValue.FindMaxValue.NJob);
+            System.Console.WriteLine("最佳工作序列为：");
+            for (var i1 = (Result.Count - 1) | 0; i1 > 0; i1 = (i1 - 1) | 0) {
+                System.Console.Write(System.String.format("{0}->", Bridge.box(Result.getItem(i1).$clone().JobId, System.Int32)));
+
+            }
+            System.Console.WriteLine(System.String.format("{0}", Bridge.box(Result.getItem(0).$clone().JobId, System.Int32)));
+            System.Console.WriteLine("工作价值总和为：");
+            System.Console.WriteLine(System.String.format("{0}", Bridge.box(System.Linq.Enumerable.from(Value).sum(), System.Int32)));
+            prompt();
+        }
+    });
+});
 </script>
 <body>
-
+    <p>
+    求解最佳工作序列 <input type="submit" id="button1" value="确定" onclick="Main (args)">
+      </p>
 </body> 
 
  
