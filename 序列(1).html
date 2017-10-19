@@ -4,147 +4,197 @@
     最佳工作序列
 </title>
 <body>
-  
-</body>
-<head>
+ <table width="100%" height="200px" border="1">
+<caption >工作序列</caption>
+<tbody><tr>
+        <td style="text-align:center">任务名称</td>
+    <td style="text-align:center">任务费时</td>
+    <td style="text-align:center" >任务期限</td>
+    <td style="text-align:center">任务价值</td>
+</tr>
+<tr>
+     <td style="text-align:center">任务一</td>
+    <td>
+    <input type="number" id="atime" value=4>
+    </td>
+    <td>
+    <input type="number"  id="adead" value=10>
+    </td>
+    <td>
+    <input type="number" id="aprofit" value=2 >
+    </td>
+</tr>
+<tr>
+    <td style="text-align:center">任务二</td>
+     <td>
+      <input type="number" id="btime" value=3>
+     </td>
+     <td>
+    <input type="number"  id="bdead" value=8>
+     </td>
+     <td>
+    <input type="number" id="bprofit"  value=3 >
+     </td>
+ </tr>
+<tr>
+     <td style="text-align:center">任务三</td>
+     <td>
+    <input type="number" id="ctime" value=2>
+     </td>
+     <td>
+    <input type="number"  id="cdead" value=4>
+    </td>
+    <td>
+    <input type="number"  id="cprofit" value=3 >
+     </td>
+ </tr>
+ <tr>
+    <td style="text-align:center">任务四</td>
+     <td>
+    <input type="number" id="dtime" value=1>
+    </td>
+    <td>
+    <input type="number" id="ddead" value=2>
+    </td>
+    <td>
+    <input type="number"  id="dprofit" value=6 >
+     </td>
+</tr>
+        <td rowpan="3" colspan="2">
+             <div id="r1"></div>
+           </div>
+         </td>
+         <td rowpan="3" colspan="1">
+            <div id="r2"></div>
+          </div>
+         <td rowpan="3" colspan="1">   
+             <button type="button" id="submit" value="submit" style="width:100%;height:100%;font-size:20px;text-align:center"  onclick="final()">确定</button>      
+                                  </td>
+</tbody>
 <script type="text/javascript">
-       var work=[{ID:1, Time:4 ,Deadline:10,worth:2},
-                 {ID:2, Time:3 ,Deadline:8,worth:3},
-                 {ID:3, Time:2 ,Deadline:4,worth:3},
-                 {ID:4, Time:1 ,Deadline:2,worth:6} ]
+ function job(id,time,dead,profit)
+ {
+            this.id=id;
+            this.time=time;
+            this.dead=dead;
+            this.profit=profit;
+}
 
-     for(var i=0;i<4;i++)   //只有一个工作组的情况
+
+        
+function final()
+{
+     var atime,adead,aprofit;
+     var btime,bdead,bprofit;
+    var ctime,cdead,cprofit;
+    var dtime,ddead,dprofit;
+            
+    atime=document.getElementById("atime").value;
+    adead=document.getElementById("adead").value;
+    aprofit=document.getElementById("aprofit").value;
+    btime=document.getElementById("btime").value;
+    bdead=document.getElementById("bdead").value;
+    bprofit=document.getElementById("bprofit").value;
+    ctime=document.getElementById("ctime").value;
+    cdead=document.getElementById("cdead").value;                   
+    cprofit=document.getElementById("cprofit").value;
+    dtime=document.getElementById("dtime").value;
+    ddead=document.getElementById("ddead").value;
+    dprofit=document.getElementById("dprofit").value;
+            
+            
+    var jobarr = new Array();
+    var job1 = new job('a', atime, adead, aprofit);
+    var job2 = new job('b', btime, bdead, bprofit);
+    var job3 = new job('c', ctime, cdead, cprofit);
+    var job4 = new job('d', dtime, ddead, dprofit);
+     jobarr[0] = job1;
+     jobarr[1] = job2;
+    jobarr[2] = job3;
+    jobarr[3] = job4;
+            
+     document.write("最佳工作序列： <br>");
+     bubbleSort(jobarr);
+      bestsq(jobarr);
+    }
+    function bubbleSort(jobarr)   //关于价值的排序
+ {
+    var len = jobarr.length;
+    for (var i = 0; i < len; i++)
+    {
+        for (var j = 0; j < len - 1 - i; j++) 
+        {
+            if (jobarr[j].profit < jobarr[j+1].profit) //相邻元素进行对比价值相同期限越长向后排
+            {       
+              var temp = jobarr[j+1];       
+              jobarr[j+1] = jobarr[j];
+               jobarr[j] = temp;
+            }
+        }
+    }
+    for (var i = 0; i < len-1; i++) 
+    {
+        if(jobarr[i].profit == jobarr[i+1].profit && jobarr[i+1].dead < jobarr[i].dead)
+        {
+           var temp = jobarr[i+1];        
+           jobarr[i+1] = jobarr[i];
+           jobarr[i] = temp;
+        }
+    }
+      return jobarr;
+}
+
+ function bestsq(jobarr)
+ {
+    var result =new Array();//结果存储
+    var deadtime;//当前工作期限
+    var time;//当前工作时间
+    var flag = 0;//
+    var len = jobarr.length;
+            
+    var timesum=0;
+     for(var i=0;i<len;i++)
      {
-       document.write("工作序列："+work[i].ID+"</br>");
-       var leftworth1=new Array();
-       leftworth1[i]=14-work[i].worth;
-       document.write("价值："+work[i].worth+" 剩余价值："+leftworth1[i]+" 工时："+work[i].Time+" 期限："+work[i].Deadline+"</br>");
-      }   
-
-       var worth2=new Array();
-       var leftworth2=new Array();
-       var time2=new Array();
-       var deadline2=new Array();
-       var m=0;
-      for(var j=0;j<3;j++)   //有两个工作组的情况
-      {
-         for(var k=j+1;k<4;k++ )
-         {
-            document.write("工作序列："+work[j].ID+" "+work[k].ID+"</br>");
-            worth2[m]=work[j].worth+work[k].worth;  //价值
-            leftworth2[m]=14-worth2[m];   //剩余价值
-
-            if(work[j].Time<work[k].time)
-            time2[m]=work[k].Time;
-            else
-            time2[m]=work[j].Time;    //工时
-
-            if(work[j].Deadline<work[k].Deadline)
-            deadline2[m]=work[j].Deadline;
-            else
-            deadline2[m]=work[k].Deadline;  //期限
-
-            document.write("价值："+worth2[m]+" 剩余价值："+leftworth2[m]+" 工时:"+time2[m]+" 期限："+deadline2[m]+"</br>");
-            m++; 
-         }
-      }
-
-      var worth3=new Array();
-      var leftworth3=new Array();
-      var time3=new Array();
-      var deadline3=new Array();
-      var n=0;
-      for(var i=0;i<2;i++)    //有三个工作组的情况
-      {
-          for(var j=i+1;j<3;j++)
+         imesum+=jobarr[i].time;
+    }
+    for(var i=0;i<timesum;i++)
+    {
+         result[i]=-1;
+    }
+    for(var i=0;i<len;i++)
+    {
+        deadtime=jobarr[i].dead-1;
+        time=jobarr[i].time;
+        if(result[deadtime]==-1)
+         {//当天没有工作
+            result[deadtime]=i;
+            time--;
+        }
+        for(var j=deadtime-1;j>= 0;j--)
+        {//向数组前找
+        if(!time){ break;}
+        if(result[j]==-1)
           {
-              for(var k=j+1;k<4;k++)
-              {
-                document.write("工作序列："+work[i].ID+" "+work[j].ID+" "+work[k].ID+"</br>");
-                worth3[n]=work[i].worth+work[j].worth+work[k].worth;  //价值
-                leftworth3[n]=14-worth3[n];   //剩余价值
-                if(work[i].Time<work[j].Time)
-                {
-                    time3[n]=work[j].Time;
-                }
-                else if(work[i].Time<work[k].Time)
-                {
-                    time3[n]=work[k].Time;
-                }
-                else
-                time3[n]=work[i].Time;    //工时
-
-                if(work[i].Deadline<work[j].Deadline)
-                {
-                    deadline3[n]=work[j].Deadline;
-                }
-                else if(work[i].Deadline<work[k].Deadline)
-                {
-                    deadline3[n]=work[k].Deadline;
-                }
-                else
-                deadline3[n]=work[i].Deadline;   //期限
-                document.write("价值："+worth3[n]+" 剩余价值："+leftworth3[n]+" 工时:"+time3[n]+" 期限："+deadline3[n]+"</br>");
-              }
+             result[j]=i;
+            time--;  
           }
-      }
-
-      var worth4=new Array();
-      var leftworth4=new Array();
-      var time4=new Array();
-      var deadline4=new Array();
-      var q=0;
-
-      for(var i=0;i<1;i++)    //有四个工作组的情况
-      {
-          for(var j=i+1;j<2;j++)
-          {
-              for(var k=j+1;k<3;k++)
-              {
-                  for(var p=k+1;p<4;p++)
-                  {
-                    document.write("工作序列："+work[i].ID+" "+work[j].ID+" "+work[k].ID+" "+work[p].ID+"</br>");
-                    worth4[q]=work[i].worth+work[j].worth+work[k].worth+work[p].worth;  //价值
-                    leftworth4[q]=14-worth4[q];   //剩余价值
-                    if(work[i].Time<work[j].Time)
-                     {
-                       time4[q]=work[j].Time;
-                     }
-                    else if(work[i].Time<work[k].Time)
-                     {
-                       time4[q]=work[k].Time;
-                     }
-                     else if(work[i].Time<work[p].Time)
-                     {
-                        time4[q]=work[p].Time;
-                     }
-                     else
-                     time4[q]=work[i].Time;      //工时
-
-                     if(work[i].Deadline<work[j].Deadline)
-                     {
-                        deadline4[q]=work[j].Deadline;
-                     }
-                    else if(work[i].Deadline<work[k].Deadline)
-                     {
-                        deadline4[q]=work[k].Deadline;
-                     }
-                     else if(work[i].Deadline<work[p].Deadline)
-                     {
-                        deadline4[q]=work[p].Deadline;
-                     }
-                     else
-                     deadline4[q]=work[i].Deadline;      //期限
-                  
-                    document.write("价值："+worth4[q]+" 剩余价值："+leftworth4[q]+" 工时:"+time4[q]+" 期限："+deadline4[q]+"</br>");
-                  }
-                
-              }
-          }
-      }
-
-
+        }
+        if(time){
+                    document.write("对于工作" + jobarr[i].id + "，在整体效益驱动下，将下无法完成！")
+                }
+     }
+            
+        for(var k=0;k<timesum;k++)
+        {
+            if(k<10)
+            {
+                document.write("第" + (k+1) + "天：");
+                document.write(jobarr[result[k]].id);
+                document.write("<br>");
+            }
+        }
+}
 </script>
-
+</body>
 </head>
 </html>
