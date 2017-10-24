@@ -5,33 +5,14 @@
     <title>
         hello world
     </title>
-    <link rel='stylesheet' href = '/stylesheets/style.css' />
 </head>
   
 
 <body>  
-<div id="div1" />
- <script>//加入页面
-    var element = document.getElementById("div1");
-
-   var c = document.creatElement("canvas");
-   var ctx = c.getContext("2d");
-   ctx.fillStyle = "$FF0000";
-   ctx.fillRect(0,0,150,75);
-   ctx.moveTO(0,0);
-   Ctx.lineTo(200,200);
-   ctx.stroke();
-
-   element.appendChild(c);
-
-   window.onresize = click1;
-
-   function cilck(id){
-       var element = document.getElementById("divl");
-       var w = element.clientWidth;
-       var h = element.clientHeight;
-       console.log("w:\d,h:\d",w,h);
-   }
+ <div id="box"></div>  
+    <script>  
+        var box = document.getElementById("box");  
+        box.innerHTML = "<p>Hello world!</p>"; 
 </script>  
 </body>  
 </html>  
