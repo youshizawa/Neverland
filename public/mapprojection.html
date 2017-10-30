@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>地图投影变换</title>
+    <meta charset="UTF-8">
+    <script type="text/javascript"></script>
+
+    <body>
+        <div>
+            <p>导入中国版图数据</p>
+            <input type="file" id="filepick1">
+            <input type="button" value="北京54投影" onclick="beijing()">
+            <input type="button" value="墨卡托投影" onclick="mkt1()">
+            <input type="button" value="兰勃特投影" onclick="lbt1()">
+        </div>
+        <div>
+            <p>导入世界版图数据</p>
+            <input type="file" id="filepick2">
+            <input type="button" value="WGS84投影" onclick="wgs()">
+            <input type="button" value="墨卡托投影" onclick="mkt2()">
+            <input type="button" value="绘制大圆轨迹" onclick="dayuan()">
+        </div>
+        <div class="bg-right">
+            <canvas id="huabu" width="1000px" height="600px"></canvas>
+        </div>
+        <script type="text/javascript">
+            /*北京54坐标系 基本参数*/
+            var a = 6378245;//长半轴
+            var b = 6356863.01877;//短半轴
+            var ee = 0.006693421622966; //第一偏心率的平方
+            var ep = 0.006738525414684;//第二偏心率的平方
+
+            /*兰伯特投影 基本参数*/
+            var L0 = 105 * Math.PI / 180;//原点经度
+            var B0 = 0;//原点纬度
+            var B1 = 20 * Math.PI / 180;//第一标准纬线
+            var B2 = 40 * Math.PI / 180;//第二标准纬线
+
+            /*WGS84坐标系 基本参数*/
+            var a1 = 6378137;//长半轴
+            var b1 = 6356752.3142;//短半轴
+            var e01 = 0.00669437999013;//第一偏心率平方
+            var e11 = 0.006739496742227;//第二偏心率平方
+
+            function Point(x, y) {
+                this.x = x;
+                this.y = y;
+            }
+
+            var N = 0;
+            var string = new Array();
+            function wgdraw1() {//绘制北京54的地理格网，间距为5度
+                var canvas = document.getElementById("huabu");
+                var cxt = canvas.getContext("2d");
+                cxt.beginPath()
+                cxt.lineWidth = 1;
+                var jjx = 100;
+                var jjy = 0;
+                for (i = 0; i < 17; i++) {
+                    cxt.moveTo(100, jjy);
+                    cxt.lineTo(900, jjy);
+                    jjy = jjy + 50;
+                }
+                for (j = 0; j < 17; j++) {
+                    cxt.moveTo(jjx, 0);
+                    cxt.lineTo(jjx, 600);
+                    jjx = jjx + 50;
+                }
+                cxt.stroke();
+            }
+            function wgdraw2() {//绘制中国版图墨卡托格网，间距为5度
+                var canvas = document.getElementById("huabu");
+                var cxt = canvas.getContext("2d");
+                cxt.beginPath()
+                cxt.lineWidth = 1;
+                var jjx = 100;
+                var jjy = 0;
+                for (i = 0; i < 17; i++) {
+                    var jjz = ((Math.pow(a1, 2) / b1) / Math.sqrt(1 + e11)) * ((jjy * Math.PI / 180) - 0);
+                    cxt.moveTo(100, (jjz * 0.00001 + 50));
+                    cxt.lineTo(900, (jjz * 0.00001 + 50));
+                    jjy = jjy + 50;
+                }
+                for (j = 0; j < 17; j++) {
+                    cxt.moveTo(jjx, 0);
+                    cxt.lineTo(jjx, 600);
+                    jjx = jjx + 50;
+                }
+                cxt.stroke();
+            }
+            function wgdraw3() {//绘制中国版图兰伯特格网，间距为5度
+                var canvas = document.getElementById("huabu");
+                var cxt = canvas.getContext("2d");
+                cxt.beginPath()
+                cxt.lineWidth = 1;
+                for (i = 0; i < 72; i++) {
+                    cxt.moveTo(100, (jjz * 0.00001 + 50));
+                    cxt.lineTo(900, (jjz * 0.00001 + 50));
+                    jjy = jjy + 50;
+                }
+                for (j = 0; j < 17; j++) {
+                    cxt.moveTo(jjx, 0);
+                    cxt.lineTo(jjx, 600);
+                    jjx = jjx + 50;
+                }
+                cxt.stroke();
+            }
+            function wgdraw4() {//绘制世界版图WGS84的格网，间距为5度
+                var canvas = document.getElementById("huabu");
+                var cxt = canvas.getContext("2d");
+                cxt.beginPath()
+                cxt.lineWidth = 1;
+                var jjx = 40;
+                var jjy = 30;
+                for (i = 0; i < 35; i++) {
+                    cxt.moveTo(40, jjy);
+                    cxt.lineTo(760, jjy);
+                    jjy = jjy + 10;
+                }
+                for (j = 0; j < 73; j++) {
+                    cxt.moveTo(jjx, 30);
+                    cxt.lineTo(jjx, 370);
+                    jjx = jjx + 10;
+
+                }
+                cxt.stroke();
+            }
+            function wgdraw5() {//绘制世界版图墨卡托投影格网，间距为5度
+                var canvas = document.getElementById("huabu");
+                var cxt = canvas.getContext("2d");
+                cxt.beginPath()
+                cxt.lineWidth = 1;
+                var jjx = 100;
+                var z = 0;
+                var q = 0;
+                var jjy1 = 210;
+                var jjy2 = 210;
+                for (i = 1; i < 17; i++) {
+                    z = z + 5;
+                    jjy1 = jjy1 - 30 * Math.sin(z * Math.PI / 180);
+                    cxt.moveTo(100, jjy1);
+                    cxt.lineTo(500, jjy1);
+                }
+                for (k = 0; k < 13; k++) {
+                    q = q + 5;
+                    jjy2 = jjy2 + 30 * Math.sin(q * Math.PI / 180);
+                    cxt.moveTo(100, jjy2);
+                    cxt.lineTo(500, jjy2);
+                }
+                for (j = 0; j < 81; j++) {
+                    cxt.moveTo(jjx, 0);
+                    cxt.lineTo(jjx, jjy2);
+                    jjx = jjx + 5;
+                }
+                cxt.stroke();
+            }
+
+            function beijing() {//根据经纬度信息显示北京54坐标系下中国地图
+                var inputfile = document.getElementById("filepick1").files[0];
+                var reader = new FileReader();
+                reader.readAsText(inputfile);
+                reader.onload = function (e) {
+                    var text = reader.result.split("\r\n");
+                    string[N] = new Array();
+
+                    var l = text.length;
+                    var judge = 0;
+                    for (i = 1; i < l - 1; i++) {
+
+                        if (text[i] != "END") {
+                            if (text[i].length != 2 && text[i].length != 3 && text[i].length != 1) {
+                                var x;
+                                var y;
+                                x = text[i].split(",")[0];
+                                y = text[i].split(",")[1];
+                                string[N][judge] = new Point(x, y);
+                                judge++;
+                            }
+                        }
+                        else {
+                            judge = 0;
+                            N = N + 1;
+                            string[N] = new Array();
+                        }
+                    }
+                    /*绘制北京54*/
+                    var canvas = document.getElementById("huabu");
+                    var cxt = canvas.getContext("2d");
+                    cxt.clearRect(0, 0, 1000, 600);
+                    wgdraw1();//绘制网格
+                    cxt.beginPath();
+                    cxt.lineWidth = 2;
+                    for (i = 0; i < N + 1; i++) {
+                        for (j = 0; j < string[i].length - 1; j++) {
+
+                            cxt.moveTo((string[i][j].x * 10) - 500, 600 - (string[i][j].y) * 10);
+                            cxt.lineTo((string[i][j + 1].x * 10) - 500, 600 - (string[i][j + 1].y) * 10);
+
+                        }
+                    }
+                    cxt.stroke();
+                }
+            }
+
+            function mkt1() {//中国版图墨卡托投影转换
+                var canvas = document.getElementById("huabu");
+                var cxt = canvas.getContext("2d");
+                cxt.clearRect(0, 0, 1000, 600);
+                wgdraw2();//绘制网格
+                cxt.beginPath();
+                cxt.lineWidth = 2;
+                for (i = 0; i < N + 1; i++) {
+                    for (j = 0; j < string[i].length - 1; j++) {
+                        var x1 = string[i][j].x;
+                        var y1 = string[i][j].y;
+                        var x2 = string[i][j + 1].x;
+                        var y2 = string[i][j + 1].y;
+                        var xx1 = ((Math.pow(a, 2) / b) / Math.sqrt(1 + ep)) * Math.log((Math.tan(Math.PI / 4 + (y1 * Math.PI / 180) / 2)) * Math.pow(((1 - Math.sqrt(ee) * Math.sin(y1 * Math.PI / 180)) / (1 + Math.sqrt(ee) * Math.sin(y1 * Math.PI / 180))), (Math.sqrt(ee) / 2)), Math.E);
+                        var yy1 = ((Math.pow(a, 2) / b) / Math.sqrt(1 + ep)) * ((x1 * Math.PI / 180) - L0);
+                        var xx2 = ((Math.pow(a, 2) / b) / Math.sqrt(1 + ep)) * Math.log((Math.tan(Math.PI / 4 + (y2 * Math.PI / 180) / 2)) * Math.pow(((1 - Math.sqrt(ee) * Math.sin(y2 * Math.PI / 180)) / (1 + Math.sqrt(ee) * Math.sin(y2 * Math.PI / 180))), (Math.sqrt(ee) / 2)), Math.E);
+                        var yy2 = ((Math.pow(a, 2) / b) / Math.sqrt(1 + ep)) * ((x1 * Math.PI / 180) - L0);
+                        cxt.moveTo(yy1 * 0.0001 + 500, 720 - xx1 * 0.0001);
+                        cxt.lineTo(yy2 * 0.0001 + 500, 720 - xx2 * 0.0001);
+
+                    }
+                }
+                cxt.stroke();
+            }
+
+            function lbt1() {//中国版图兰伯特投影转换
+                var canvas = document.getElementById("huabu");
+                var cxt = canvas.getContext("2d");
+                cxt.clearRect(0, 0, 1000, 600);
+                cxt.beginPath();
+                cxt.lineWidth = 2;
+                var mb1 = Math.cos(B1) / Math.sqrt(1 - ee * Math.pow(Math.sin(B1), 2));
+                var mb2 = Math.cos(B2) / Math.sqrt(1 - ee * Math.pow(Math.sin(B2), 2));
+                var tb1 = Math.tan(Math.PI / 4 - B1 / 2) / Math.pow(((1 - Math.sqrt(ee) * Math.sin(B1)) / (1 + Math.sqrt(ee) * Math.sin(B1))), (Math.sqrt(ee) / 2));
+                var tb2 = Math.tan(Math.PI / 4 - B2 / 2) / Math.pow(((1 - Math.sqrt(ee) * Math.sin(B2)) / (1 + Math.sqrt(ee) * Math.sin(B1))), (Math.sqrt(ee) / 2));
+                var n = Math.log(mb1 / mb2, Math.E) / Math.log(tb1 / tb2, Math.E);
+                var f = mb1 / (n * Math.pow(tb1, n));
+                for (i = 0; i < N + 1; i++) {
+                    for (j = 0; j < string[i].length - 1; j++) {
+                        var x1 = string[i][j].x;
+                        var y1 = string[i][j].y;
+                        var x2 = string[i][j + 1].x;
+                        var y2 = string[i][j + 1].y;
+                        var r1 = a * f * Math.pow(Math.tan(Math.PI / 4 - (y1 * Math.PI / 180) / 2) / Math.pow(((1 - Math.sqrt(ee) * Math.sin(y1 * Math.PI / 180)) / (1 + Math.sqrt(ee) * Math.sin(y1 * Math.PI / 180))), (Math.sqrt(ee) / 2)), n);
+                        var ct1 = n * (x1 * Math.PI / 180 - L0);
+                        var r2 = a * f * Math.pow(Math.tan(Math.PI / 4 - (y2 * Math.PI / 180) / 2) / Math.pow(((1 - Math.sqrt(ee) * Math.sin(y2 * Math.PI / 180)) / (1 + Math.sqrt(ee) * Math.sin(y2 * Math.PI / 180))), (Math.sqrt(ee) / 2)), n);
+                        var ct2 = n * (x2 * Math.PI / 180 - L0);
+                        var xx1 = a * f - r1 * Math.cos(ct1);
+                        var yy1 = r1 * Math.sin(ct1);
+                        var xx2 = a * f - r2 * Math.cos(ct2);
+                        var yy2 = r2 * Math.sin(ct2);
+                        cxt.moveTo(yy1 * 0.0001 + 500, 640 - xx1 * 0.0001);
+                        cxt.lineTo(yy2 * 0.0001 + 500, 640 - xx2 * 0.0001);
+                    }
+                }
+                cxt.stroke();
+            }
+            var M = 0;
+            var strang = new Array();
+            function wgs() {//根据经纬度信息显示WGS84坐标系下中国地图
+                var inputfile = document.getElementById("filepick2").files[0];
+                var reader = new FileReader();
+                reader.readAsText(inputfile);
+                reader.onload = function (e) {
+                    var text = reader.result.split("\r\n");
+                    strang[M] = new Array();
+
+                    var l = text.length;
+                    var judge = 0;
+                    for (i = 1; i < l - 1; i++) {
+
+                        if (text[i] != "END") {
+                            if (text[i].length != 2 && text[i].length != 3 && text[i].length != 1 && text[i].length != 4) {
+                                var x;
+                                var y;
+                                x = text[i].split(",")[0];
+                                y = text[i].split(",")[1];
+                                strang[M][judge] = new Point(x, y);
+                                judge++;
+                            }
+                        }
+                        else {
+                            judge = 0;
+                            M = M + 1;
+                            strang[M] = new Array();
+                        }
+                    }
+                    /*绘制WGS84*/
+                    var canvas = document.getElementById("huabu");
+                    var cxt = canvas.getContext("2d");
+                    cxt.clearRect(0, 0, 1000, 600);
+                    wgdraw4();
+                    cxt.beginPath();
+                    cxt.lineWidth = 2;
+                    for (i = 0; i < M + 1; i++) {
+                        for (j = 0; j < strang[i].length - 1; j++) {
+                            cxt.moveTo((strang[i][j].x * 2) + 400, 200 - (strang[i][j].y) * 2);
+                            cxt.lineTo((strang[i][j + 1].x * 2) + 400, 200 - (strang[i][j + 1].y) * 2);
+
+                        }
+                    }
+                    cxt.stroke();
+                }
+            }
+            function mkt2() {//世界版图墨卡托投影转换
+                var canvas = document.getElementById("huabu");
+                var cxt = canvas.getContext("2d");
+                cxt.clearRect(0, 0, 1000, 600);
+                wgdraw5();
+                cxt.beginPath();
+                cxt.lineWidth = 2;
+                for (i = 0; i < M + 1; i++) {
+                    for (j = 0; j < strang[i].length - 1; j++) {
+                        var x1 = strang[i][j].x;
+                        var y1 = strang[i][j].y;
+                        var x2 = strang[i][j + 1].x;
+                        var y2 = strang[i][j + 1].y;
+                        var xx1 = ((Math.pow(a1, 2) / b1) / Math.sqrt(1 + e11)) * Math.log((Math.tan(Math.PI / 4 + (y1 * Math.PI / 180) / 2)) * Math.pow(((1 - Math.sqrt(e01) * Math.sin(y1 * Math.PI / 180)) / (1 + Math.sqrt(e01) * Math.sin(y1 * Math.PI / 180))), (Math.sqrt(e01) / 2)), Math.E);
+                        var yy1 = ((Math.pow(a1, 2) / b1) / Math.sqrt(1 + e11)) * ((x1 * Math.PI / 180) - 0);
+                        var xx2 = ((Math.pow(a1, 2) / b1) / Math.sqrt(1 + e11)) * Math.log((Math.tan(Math.PI / 4 + (y2 * Math.PI / 180) / 2)) * Math.pow(((1 - Math.sqrt(e01) * Math.sin(y2 * Math.PI / 180)) / (1 + Math.sqrt(e01) * Math.sin(y2 * Math.PI / 180))), (Math.sqrt(e01) / 2)), Math.E);
+                        var yy2 = ((Math.pow(a1, 2) / b1) / Math.sqrt(1 + e11)) * ((x2 * Math.PI / 180) - 0);
+                        cxt.moveTo(yy1 * 0.00001 + 300, 200 - xx1 * 0.00001);
+                        cxt.lineTo(yy2 * 0.00001 + 300, 200 - xx2 * 0.00001);
+
+                    }
+                }
+                cxt.stroke();
+            }
+            /*大圆各个参数*/
+            var LO1 = 2.35222222;//巴黎经度
+            var LA1 = 48.85661389;//巴黎纬度
+            var LO2 = 116.40966670;//北京经度
+            var LA2 = 39.90690556;//北京纬度
+            var tanLA1 = Math.tan(LA1 / 180 * Math.PI);
+            var tanLA2 = Math.tan(LA2 / 180 * Math.PI);
+            var sinLO1 = Math.sin(LO1 / 180 * Math.PI);
+            var sinLO2 = Math.sin(LO2 / 180 * Math.PI);
+            var cosLO1 = Math.cos(LO1 / 180 * Math.PI);
+            var cosLO2 = Math.cos(LO2 / 180 * Math.PI);
+            var number = 1000;
+            var LOQ = Math.atan(-(tanLA2 * cosLO1 - tanLA1 * cosLO2) / (tanLA2 * sinLO1 - tanLA1 * sinLO2)) * 180 / Math.PI;;//新极点经度
+            var LAQ = -Math.atan(Math.cos((LO1 - LOQ) / 180 * Math.PI) / tanLA1) * 180 / Math.PI;//新极点纬度
+            var difference = LO2 - LO1;//两地经差
+            var dx = difference / number;//轨迹点经差
+            var routes = new Array();
+            var LOQ;//新极点经度
+            var LAQ;//新极点纬度
+            function zuobiao() {
+                var m;
+                var n;
+                this.m = m;
+                this.n = n;
+            }
+
+            function route() {
+                LOQ = Math.atan(-(tanLA2 * cosLO1 - tanLA1 * cosLO2) / (tanLA2 * sinLO1 - tanLA1 * sinLO2)) * 180 / Math.PI;
+                LAQ = -Math.atan(Math.cos((LO1 - LOQ) / 180 * Math.PI) / tanLA1) * 180 / Math.PI;
+                var difference = LO2 - LO1;//北京与巴黎的经差
+                var dx = difference / number;//各小点间的经差
+                var pts = new Array(); //存放点
+                var rr = Math.pow((LOQ - LO2), 2) + Math.pow((LAQ - LA2), 2);
+
+                for (var i = 0; i < number; i++) {//将点存入数组
+                    pts[i] = new zuobiao();
+                    pts[i].m = LO2 - i * dx;
+                    var tx = pts[i].m;
+                    var ty = Math.sqrt(rr - Math.pow((LOQ - tx), 2)) + LAQ;
+                    pts[i].n = ty;
+
+                    routes[i] = new zuobiao();
+                    routes[i] = pts[i];
+                }
+            }
+
+            function dayuan() {//绘制大圆轨迹
+                route();
+                var canvas = document.getElementById("huabu");
+                var cxt = canvas.getContext("2d");
+                cxt.beginPath();
+                cxt.strokeStyle = "red";
+                cxt.lineWidth = 2;
+                if (routes != null) {
+                    for (var j = 0; j < routes.length; j++) {
+                        var x1 = routes[j].m;
+                        var y1 = routes[j].n;
+                        var xx1 = ((Math.pow(a1, 2) / b1) / Math.sqrt(1 + e11)) * Math.log((Math.tan(Math.PI / 4 + (y1 * Math.PI / 180) / 2)) * Math.pow(((1 - Math.sqrt(e01) * Math.sin(y1 * Math.PI / 180)) / (1 + Math.sqrt(e01) * Math.sin(y1 * Math.PI / 180))), (Math.sqrt(e01) / 2)), Math.E);
+                        var yy1 = ((Math.pow(a1, 2) / b1) / Math.sqrt(1 + e11)) * ((x1 * Math.PI / 180) - 0);
+                        routes[j].m = yy1 * 0.00001 + 300;
+                        routes[j].n = 200 - xx1 * 0.00001;
+
+                    }
+                    for (j = 0; j < routes.length - 1; j++) {
+                        cxt.moveTo(routes[j].m, routes[j].n);
+                        cxt.lineTo(routes[j + 1].m, routes[j + 1].n);
+                    }
+
+                    cxt.stroke();
+                }
+            }
+        </script>
+    </body>
+</head>
+
+</html>
