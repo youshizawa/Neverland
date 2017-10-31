@@ -94,19 +94,36 @@
                 var cxt = canvas.getContext("2d");
                 cxt.beginPath()
                 cxt.lineWidth = 1;
-                for (i = 0; i < 72; i++) {
-                    cxt.moveTo(100, (jjz * 0.00001 + 50));
-                    cxt.lineTo(900, (jjz * 0.00001 + 50));
-                    jjy = jjy + 50;
+                var xx1=500;
+                var yy1=-800;
+                var xx2=500;
+                var yy2=-800;
+                for (i=0;i<8;i++){
+                    xx1=xx1-1600*Math.sin(Math.PI*5*i/180);
+                    yy1=yy1+1600*Math.cos(Math.PI*5*i/180)
+                    cxt.moveTo(500, -800);
+                    cxt.lineTo(xx1, yy1);
                 }
-                for (j = 0; j < 17; j++) {
-                    cxt.moveTo(jjx, 0);
-                    cxt.lineTo(jjx, 600);
-                    jjx = jjx + 50;
+                for (i=0;i<8;i++){
+                    xx2=xx2+1600*Math.sin(Math.PI*5*i/180);
+                    yy2=yy2+1600*Math.cos(Math.PI*5*i/180)
+                    cxt.moveTo(500, -800);
+                    cxt.lineTo(xx2, yy2);
                 }
                 cxt.stroke();
             }
-            function wgdraw4() {//绘制世界版图WGS84的格网，间距为5度
+            function wgdraw33(){
+                var canvas = document.getElementById("huabu");
+                var cxxt = canvas.getContext("2d");
+                for (i=0;i<17;i++){
+                cxxt.beginPath();
+                cxxt.lineWidth = 1; 
+                    cxxt.arc(500, -800, 600+i*50, (Math.PI*72.5/180), (Math.PI*107.5/180));
+                    cxxt.stroke();
+                }
+                
+            }
+            function wgdraw4({}) {//绘制世界版图WGS84的格网，间距为5度
                 var canvas = document.getElementById("huabu");
                 var cxt = canvas.getContext("2d");
                 cxt.beginPath()
@@ -233,6 +250,8 @@
                 var cxt = canvas.getContext("2d");
                 cxt.clearRect(0, 0, 1000, 600);
                 cxt.beginPath();
+                wgdraw3();
+                wgdraw33();
                 cxt.lineWidth = 2;
                 var mb1 = Math.cos(B1) / Math.sqrt(1 - ee * Math.pow(Math.sin(B1), 2));
                 var mb2 = Math.cos(B2) / Math.sqrt(1 - ee * Math.pow(Math.sin(B2), 2));
