@@ -75,8 +75,8 @@
                     for (i = 0; i < N + 1; i++) {
                         for (j = 0; j < string[i].length - 1; j++) {
 
-                            cxt.moveTo(string[i][j].x * 0.0008 - 10300, (string[i][j].y) * 0.0008 - 2800);
-                            cxt.lineTo(string[i][j + 1].x * 0.0008 - 10300, (string[i][j + 1].y) * 0.0008 - 2800);
+                            cxt.moveTo(string[i][j].x * 0.0008 - 10300, 3400-(string[i][j].y) * 0.0008 );
+                            cxt.lineTo(string[i][j + 1].x * 0.0008 - 10300, 3400-(string[i][j + 1].y) * 0.0008);
                         }
                     }
                     cxt.stroke();
@@ -205,8 +205,8 @@
                     for (i = 0; i < N + 1; i++) {
                         for (j = 0; j < string[i].length - 1; j++) {
 
-                            cxt.moveTo(string[i][j].x*80-9200, (string[i][j].y)*80-2300);
-                            cxt.lineTo(string[i][j + 1].x*80-9200 , (string[i][j + 1].y)*80-2300 );
+                            cxt.moveTo(string[i][j].x*80-9200, 2900-(string[i][j].y)*80);
+                            cxt.lineTo(string[i][j + 1].x*80-9200 , 2900-(string[i][j + 1].y)*80);
 
                         }
                     }
