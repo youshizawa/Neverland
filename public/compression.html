@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>道格拉斯法-压缩</title>
+    <meta charset="UTF-8">
+    <script type="text/javascript"></script>
+
+    <body>
+        <div>
+            <p>导入中国版图数据</p>
+            <input type="file" id="filepick">
+            <input type="button" value="地图绘制" onclick="show1()">
+            <br>
+            输入阈值：<input type="text" id="yuzhi" value=""/>
+            &nbsp&nbsp<input type="button" value="图像压缩" onclick="show2()">
+            <br>
+            压缩率为：<div id="per">
+        </div>
+        <div class="bg-right">
+            <canvas id="huabu" width="1000px" height="600px"></canvas>
+        </div>
+    <script type="text/javascript">
+            /*北京54坐标系 基本参数*/
+            var a = 6378245;//长半轴
+            var b = 6356863.01877;//短半轴
+            var ee = 0.006693421622966; //第一偏心率的平方
+            var ep = 0.006738525414684;//第二偏心率的平方
+            /*兰伯特投影 基本参数*/
+            var L0 = 105 * Math.PI / 180;//原点经度
+            var B0 = 0;//原点纬度
+            var B1 = 20 * Math.PI / 180;//第一标准纬线
+            var B2 = 40 * Math.PI / 180;//第二标准纬线
+            var dgline = new Array();//压缩后的数组
+            var temp = new Array();
+
+            function Point(x, y) {
+                this.x = x;
+                this.y = y;
+            }
+
+            var N = 0;
+            var string = new Array();
+            string[N] = new Array();
+
+            function show1() {//根据经纬度信息显示兰伯特投影的中国版图
+                var inputfile = document.getElementById("filepick").files[0];
+                var reader = new FileReader();
+                reader.readAsText(inputfile);
+                reader.onload = function (e) {
+                    var text = reader.result.split("\r\n");
+
+                    var l = text.length;
+                    var judge = 0;
+                    for (i = 1; i < l - 1; i++) {
+
+                        if (text[i] != "END") {
+                            if (text[i].length != 2 && text[i].length != 3 && text[i].length != 1) {
+                                var x;
+                                var y;
+                                x = text[i].split(",")[0];
+                                y = text[i].split(",")[1];
+                                string[N][judge] = new Point(x, y);
+                                judge++;
+                            }
+                        }
+                        else {
+                            judge = 0;
+                            N = N + 1;
+                            string[N] = new Array();
+                        }
+                    }
+                    /*绘制兰勃特投影*/
+                    var canvas = document.getElementById("huabu");
+                    var cxt = canvas.getContext("2d");
+                    cxt.clearRect(0, 0, 1000, 600);
+                    cxt.beginPath();
+                    cxt.lineWidth = 2;
+                    var mb1 = Math.cos(B1) / Math.sqrt(1 - ee * Math.pow(Math.sin(B1), 2));
+                    var mb2 = Math.cos(B2) / Math.sqrt(1 - ee * Math.pow(Math.sin(B2), 2));
+                    var tb1 = Math.tan(Math.PI / 4 - B1 / 2) / Math.pow(((1 - Math.sqrt(ee) * Math.sin(B1)) / (1 + Math.sqrt(ee) * Math.sin(B1))), (Math.sqrt(ee) / 2));
+                    var tb2 = Math.tan(Math.PI / 4 - B2 / 2) / Math.pow(((1 - Math.sqrt(ee) * Math.sin(B2)) / (1 + Math.sqrt(ee) * Math.sin(B1))), (Math.sqrt(ee) / 2));
+                    var n = Math.log(mb1 / mb2, Math.E) / Math.log(tb1 / tb2, Math.E);
+                    var f = mb1 / (n * Math.pow(tb1, n));
+                    for (i = 0; i < N + 1; i++) {
+                        for (j = 0; j < string[i].length - 1; j++) {
+                            var x1 = string[i][j].x;
+                            var y1 = string[i][j].y;
+                            var x2 = string[i][j + 1].x;
+                            var y2 = string[i][j + 1].y;
+                            var r1 = a * f * Math.pow(Math.tan(Math.PI / 4 - (y1 * Math.PI / 180) / 2) / Math.pow(((1 - Math.sqrt(ee) * Math.sin(y1 * Math.PI / 180)) / (1 + Math.sqrt(ee) * Math.sin(y1 * Math.PI / 180))), (Math.sqrt(ee) / 2)), n);
+                            var ct1 = n * (x1 * Math.PI / 180 - L0);
+                            var r2 = a * f * Math.pow(Math.tan(Math.PI / 4 - (y2 * Math.PI / 180) / 2) / Math.pow(((1 - Math.sqrt(ee) * Math.sin(y2 * Math.PI / 180)) / (1 + Math.sqrt(ee) * Math.sin(y2 * Math.PI / 180))), (Math.sqrt(ee) / 2)), n);
+                            var ct2 = n * (x2 * Math.PI / 180 - L0);
+                            var xx1 = a * f - r1 * Math.cos(ct1);
+                            var yy1 = r1 * Math.sin(ct1);
+                            var xx2 = a * f - r2 * Math.cos(ct2);
+                            var yy2 = r2 * Math.sin(ct2);
+                            cxt.moveTo(yy1 * 0.0001 + 500, 640 - xx1 * 0.0001);
+                            cxt.lineTo(yy2 * 0.0001 + 500, 640 - xx2 * 0.0001);
+                        }
+                    }
+                    cxt.stroke();
+            }
+        }
+
+        /*道格拉斯-普克法压缩*/
+        function select(be,en,xx,yy,th){
+            var max=0;
+            var x1,y1,x2,y2,x3,y3;
+            var d=-1,d1;
+            var mark=0;
+            x1=xx[be];
+            y1=yy[be];
+            x2=xx[en];
+            y2=yy[en];
+            
+            for(i=be+1;i<en;i++){//筛选最大点 
+                x3=xx[i];  
+                y3=yy[i];
+                d1=(Math.abs((x1-x3)*(y2-y3)-(x2-x3)*(y1-y3)))/(Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)));
+                if(d1>d && d1>th){
+                    d=d1;
+                    mark=i;
+                } 
+            }
+            if(mark==0){
+                dgline.push(xx[be]);
+                dgline.push(yy[be]);
+                dgline.push(xx[en]);
+                dgline.push(yy[en]);
+                return;
+            }
+            else if (be + 1 == mark && en - 2 != mark) {
+                select(mark + 1, en, xx, yy, th);
+            }
+            else if (en - 2 == mark && be + 1 != mark) {
+                select(be, mark + 1, xx, yy, th);
+            }
+            else if (en - 2 == max && be + 1 == max) {
+                dgline.push(xx[mark]);
+                dgline.push(yy[mark]);
+                dgline.push(xx[mark + 1]);
+                dgline.push(yy[mark + 1]);
+                return;
+            }
+            else {
+                select(be, mark, xx, yy, th);
+                select(mark + 1, en, xx, yy, th);
+            }
+        }
+        function lbt(string) {//兰伯特转换
+            var mb1 = Math.cos(B1) / Math.sqrt(1 - ee * Math.pow(Math.sin(B1), 2));
+            var mb2 = Math.cos(B2) / Math.sqrt(1 - ee * Math.pow(Math.sin(B2), 2));
+            var tb1 = Math.tan(Math.PI / 4 - B1 / 2) / Math.pow(((1 - Math.sqrt(ee) * Math.sin(B1)) / (1 + Math.sqrt(ee) * Math.sin(B1))), (Math.sqrt(ee) / 2));
+            var tb2 = Math.tan(Math.PI / 4 - B2 / 2) / Math.pow(((1 - Math.sqrt(ee) * Math.sin(B2)) / (1 + Math.sqrt(ee) * Math.sin(B1))), (Math.sqrt(ee) / 2));
+            var n = Math.log(mb1 / mb2, Math.E) / Math.log(tb1 / tb2, Math.E);
+            var f = mb1 / (n * Math.pow(tb1, n));
+            var re=new Array();
+            for (i = 0; i < string.length ; i++) {
+                    re[i]=new Array();
+                    for (j = 0; j < string[i].length - 1; j++) {
+                        var x1 = string[i][j].x;
+                        var y1 = string[i][j].y;
+                        var x2 = string[i][j + 1].x;
+                        var y2 = string[i][j + 1].y;
+                        var r1 = a * f * Math.pow(Math.tan(Math.PI / 4 - (y1 * Math.PI / 180) / 2) / Math.pow(((1 - Math.sqrt(ee) * Math.sin(y1 * Math.PI / 180)) / (1 + Math.sqrt(ee) * Math.sin(y1 * Math.PI / 180))), (Math.sqrt(ee) / 2)), n);
+                        var ct1 = n * (x1 * Math.PI / 180 - L0);
+                        var r2 = a * f * Math.pow(Math.tan(Math.PI / 4 - (y2 * Math.PI / 180) / 2) / Math.pow(((1 - Math.sqrt(ee) * Math.sin(y2 * Math.PI / 180)) / (1 + Math.sqrt(ee) * Math.sin(y2 * Math.PI / 180))), (Math.sqrt(ee) / 2)), n);
+                        var ct2 = n * (x2 * Math.PI / 180 - L0);
+                        var xx1 = a * f - r1 * Math.cos(ct1);
+                        var yy1 = r1 * Math.sin(ct1);
+                        var xx2 = a * f - r2 * Math.cos(ct2);
+                        var yy2 = r2 * Math.sin(ct2);
+                        re[i][j]=new Point(yy1,xx1);
+                        re[i][j+1]=new Point(yy2,xx2)
+                    }
+                }
+            return re;
+        }
+
+        function show2(){//显示压缩后的地图
+            var inputfile = document.getElementById("filepick").files[0];
+            var reader = new FileReader();
+            reader.readAsText(inputfile);
+            reader.onload = function (e) {
+                var text1 = reader.result.split("\r\n");;
+                var pointx=new Array();
+                var pointy=new Array();
+                var num=0;
+                var f=0;
+                var th=document.getElementById("yuzhi").value;
+                for(var k=1;k<text1.length;k++){
+                    if(text1[k]!="END"){
+                        if (text1[k].length != 2 && text1[k].length != 3 && text1[k].length != 1) {
+                            pointx[num]=text1[k].split(",")[0];
+                            pointy[num++]=text1[k].split(",")[1];
+                        }      
+                    }else{
+                            dgline.push(f++);
+                            select(0,parseInt(num/2),pointx,pointy,th);
+                            select(parseInt(num/2)+1,num-1,pointx,pointy,th);
+                            dgline.push("END");
+                            pointx=[];
+                            pointy=[];
+                            num=0;
+                            k++;
+                }
+            }
+            temp=dgline.slice(0);
+            dgline=[];
+
+                var N = 0;
+                var string = new Array(); string[N] = new Array();
+                var judge = 0;
+                for (var i = 1; i < temp.length; i++) {
+                    if (temp[i]) {
+                        if (temp[i] != "END") {
+                            if (temp[i].length != 2 && temp[i].length != 3 && temp[i].length != 1) {
+                                var x = temp[i];
+                                var y = temp[++i];
+                                string[N][judge] = new Point(x, y);
+                                judge++;
+                            }
+                        }
+                        else {
+                            judge = 0;
+                            N = N + 1;
+                            string[N] = new Array();
+                            i++;
+                        }
+                    }
+                }
+
+            var s = lbt(string);
+            var D1 = reader.result.split(/\n|,/);
+            /*压缩率*/
+            document.getElementById("per").innerHTML = '';
+            document.getElementById("per").innerHTML = ((D1.length-s.length) / D1.length);
+            
+            /*绘制压缩后图像*/
+            var canvas = document.getElementById("huabu");
+            var cxt = canvas.getContext("2d");
+            cxt.clearRect(0, 0, 1000, 600);
+            cxt.beginPath();
+            cxt.lineWidth = 0.5;
+            for (i = 0; i < s.length; i++) {
+                for (j = 0; j < s[i].length-1; j++) {
+                    cxt.moveTo(s[i][j].x* 0.0001 + 500, 640 - s[i][j].y * 0.0001);
+                    cxt.lineTo(s[i][j+1].x* 0.0001 + 500, 640 - s[i][j+1].y * 0.0001);
+                }
+            }
+            cxt.stroke();
+        }
+        }
+
+
+
+        </script>
+    </body>
+</head>
+
+</html>

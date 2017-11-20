@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>四叉树编码</title>
+    <meta charset="UTF-8">
+    <script type="text/javascript"></script>
+
+    <body>
+        <table width="100%" height="200px" border="1">
+            <caption >四叉树编码</caption>
+            <tbody><tr>
+            <td style="text-align:center">矩阵四叉树</td>
+            <td style="text-align:center">任务费时</td>
+             </tr>
+            <tr>
+            <td style="text-align:center">任务a</td>
+            <td>
+             <input type="number" id="atime" value=4>
+            </td>
+             </tr>
+            </tbody>
+        <script type="text/javascript">
+            function readfile() {//根据经纬度信息显示兰伯特投影的中国版图
+                var inputfile = document.getElementById("filepick").files[0];
+                var reader = new FileReader();
+                reader.readAsText(inputfile);
+                reader.onload = function (e) {
+                    var text = reader.result.split("\r\n");
+                    var N = 0;
+                }
+            }
+            function Tobinary(k)//十进制转换为二进制
+            {
+                var s = new array;
+                var rem, i = 0, t = 0;
+                do {
+                    rem = k % 2;
+                    k = k / 2;
+                    s[i++] = rem;
+                } while (k != 0);   //当十进制数是0时也要进行一遍此循环，所以必须用do……while循环，而不是while循环
+                for (var j = --i; j >= 0; j--) {
+                    t += s[j] * Math.pow(10, j);
+                }
+                return t;
+            }
+            function four_decimal(b)//得到四进制m码
+            {
+                for (i = 0; i < 8; i++) {
+                    for (j = 0; j < 8; j++) {
+                        var m = Tobinary(i);
+                        var n = Tobinary(j);
+                        b[i][j] = 2 * m + n;
+                    }
+                }
+            }
+            function checkcombine_four(a, b)//合并处理
+            {
+                c[4] = [[0, 0], [0, 4], [4, 0], [4, 4]];
+                for (i = 0; i < 4; i++) {
+                    var w = 0;
+                    for (var m = c[i][0]; m < 4; m++) {
+                        for (var n = c[i][1]; n < 3; n++) {
+                            w += eq(a[m][n], a[m][n + 1]);
+                            if (w == 12)//16个值属性一样
+                            {
+                                for (m = c[i][0]; m < c[i][0] + 4; m++) {
+                                    for (n = c[i][1]; n < c[i][1] + 4; n++) {
+                                        b[m][n] = b[(c[i][0])][(c[i][1])];
+                                        (b[m][n] + 1) = 99999999;
+                                        (b[m][n] + 2) = 99999999;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //第二层
+                    d[4] = [[0, 0], [0, 2], [2, 0], [2, 2]];
+                    e[4] = [[0, 4], [0, 6], [2, 4], [2, 6]];
+                    f[4] = [[4, 0], [4, 2], [6, 0], [6, 2]],
+                        g[4] = [[4, 4], [4, 6], [6, 4], [6, 6]];
+                    judge_four(a, b, d);
+                    judge_four(a, b, e);
+                    judge_four(a, b, f);
+                    judge_four(a, b, g);
+                }
+
+            }
+
+            function eq(m, n) {
+                if (m == n)
+                    return 1;
+                else
+                    return 0;
+            }
+
+            function judge_four(a, b, c) {
+                for (i = 0; i < 4; i++) {
+                    var w = 0;
+                    for (m = c[i][0]; m < c[i][0] + 2; m++)
+                        for (n = c[i][1]; n < c[i][1] + 1; n++)
+                            w += eq(a[m][n], a[m][n + 1]);
+                    if (w == 2)//4个值属性一样
+                    {
+                        for (m = c[i][0]; m < c[i][0] + 2; m++)
+                            for (n = c[i][1]; n < c[i][1] + 2; n++) {
+                                b[m][n] = b[(c[i][0])][(c[i][1])];
+                                (b[m][n] + 1) = (b[(c[i][0])][(c[i][1])] + 1);
+                                (b[m][n] + 2) = 99999999;
+                            }
+                    }
+                }
+            }
+            function Change(m, n)
+            {
+                var t=new array;
+                var q;
+                for (i = 0; i < 8;i++)
+                for (j = 0; j < 8; j++)
+                {
+                    q = m[i][j];
+                    t[0] = q / 100;
+                    q = q % 100;
+                    t[1] = q / 10;
+                    q = q % 10;
+                    t[2] = q;
+                    n[i][j] = t;
+                    (n[i][j] + 1) = (t + 1);
+                    (n[i][j] + 2) = (t + 2);
+                }
+            }
+
+            function show(){
+                var a,b,c=new array;
+                var bb=new c;
+                a=[ 1, 1, 1, 1, 2, 2, 3, 3,
+ 1, 1, 1, 1, 2, 2, 3, 3,
+ 1, 1, 1, 1, 4, 4, 5, 5,
+ 1, 1, 1, 1, 4, 4, 5, 5,
+ 6, 6, 7, 8,13,13,14,14,
+ 6, 6, 9,10,13,13,14,14,
+11,11,12,12,15,16,19,19,
+11,11,12,12,17,18,19,19];
+                four_decimal(b);
+                Change(b, bb);
+                checkcombine_four(a,bb);
+                alert(bb);
+
+            }
