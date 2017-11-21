@@ -38,7 +38,8 @@
             }
             return t;
         }
-        function four_decimal(b) {//四进制编码
+
+    function four_decimal(b) {//四进制编码
             for (var i = 0; i < 8; i++) {
                 for (var j = 0; j < 8; j++) {
                     var m = zhuanhuan(i);
@@ -65,25 +66,6 @@
                             b[m][n][1] = b[(c[i][0])][(c[i][1])][1];
                             b[m][n][2] = 99999999;
                         }
-                }
-            }
-        }
-
-        function Change(m, n) //将四进制的M码按照规定格式输出.
-        {
-            var t = new Array(3);
-            var q;
-            for (var i = 0; i < 8; i++) {
-                for (var j = 0; j < 8; j++) {
-                    q = m[i][j];
-                    t[0] = parseInt(q / 100);
-                    q = q % 100;
-                    t[1] = parseInt(q / 10);
-                    q = q % 10;
-                    t[2] = q;
-                    n[i][j][0] = t[0];
-                    n[i][j][1] = t[1];
-                    n[i][j][2] = t[2];
                 }
             }
         }
@@ -116,37 +98,25 @@
             judge(a, b, f);
             judge(a, b, g);
         }
-
-        function cal(a) {
+        function shuchu(m, n) //按照规定格式输出.
+        {
+            var t = new Array(3);
+            var q;
             for (var i = 0; i < 8; i++) {
-                for (var j = 0; j < 8; j++)
-                    if (a[i][j][1] == 99999999 && (a[i][j][2]) == 99999999) {
-                        document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + "(11111)"
-                        document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + a[i][j][0];
-                    }
-                    else if (a[i][j][2] == 99999999) {
-                        if (a[i][j][0] == 0) {
-                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + a[i][j][0] + "&nbsp&nbsp&nbsp&nbsp";
-                        }
-                        else {
-                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + a[i][j][0] + a[i][j][1] + "&nbsp&nbsp";
-                        }
-                    }
-                    else {
-                        if (a[i][j][0] == 0) {
-                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + a[i][j][0] + "&nbsp&nbsp&nbsp&nbsp";
-                        }
-                        else if (a[i][j][1] == 0) {
-                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + a[i][j][0] + a[i][j][1] + "&nbsp&nbsp";
-                        }
-                        else {
-                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + a[i][j][0] + a[i][j][1] + a[i][j][2] + "&nbsp&nbsp";
-                        }
-
-                    }
-                document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + "<br>";
+                for (var j = 0; j < 8; j++) {
+                    q = m[i][j];
+                    t[0] = parseInt(q / 100);
+                    q = q % 100;
+                    t[1] = parseInt(q / 10);
+                    q = q % 10;
+                    t[2] = q;
+                    n[i][j][0] = t[0];
+                    n[i][j][1] = t[1];
+                    n[i][j][2] = t[2];
+                }
             }
         }
+
         function temp() {//构建临时存储数组
             a = new Array(8);
             for (var i = 0; i < 8; i++) {
@@ -155,6 +125,7 @@
             return a;
         }
         function show() {//最终结果
+            /*读入数据*/
             var str = document.getElementById("shuju").innerHTML;
             var string = new Array();
             string = str.split("<br>");
@@ -169,11 +140,37 @@
                 for (var j = 0; j < 8; j++)
                     final[i][j] = new Array(3);
             }
-
             four_decimal(b);
-            Change(b, final);
+            shuchu(b, final);
             hebing(a, final);
-            cal(final);
+            for (var i = 0; i < 8; i++) {
+                for (var j = 0; j < 8; j++)
+                    if (final[i][j][1] == 99999999 && (final[i][j][2]) == 99999999) {
+                        document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + "(11111)"
+                        document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + final[i][j][0];
+                    }
+                    else if (final[i][j][2] == 99999999) {
+                        if (final[i][j][0] == 0) {
+                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + final[i][j][0] + "&nbsp&nbsp&nbsp&nbsp";
+                        }
+                        else {
+                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + final[i][j][0] + final[i][j][1] + "&nbsp&nbsp";
+                        }
+                    }
+                    else {
+                        if (final[i][j][0] == 0) {
+                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + final[i][j][0] + "&nbsp&nbsp&nbsp&nbsp";
+                        }
+                        else if (final[i][j][1] == 0) {
+                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + final[i][j][0] + final[i][j][1] + "&nbsp&nbsp";
+                        }
+                        else {
+                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + final[i][j][0] + final[i][j][1] + final[i][j][2] + "&nbsp&nbsp";
+                        }
+
+                    }
+                document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + "<br>";
+            }
         }
     
 
