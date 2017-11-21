@@ -7,143 +7,177 @@
     <script type="text/javascript"></script>
 
     <body>
-        <table width="100%" height="200px" border="1">
-            <caption >四叉树编码</caption>
-            <tbody><tr>
-            <td style="text-align:center">矩阵四叉树</td>
-            <td style="text-align:center">任务费时</td>
-             </tr>
-            <tr>
-            <td style="text-align:center">任务a</td>
-            <td>
-             <input type="number" id="atime" value=4>
-            </td>
-             </tr>
-            </tbody>
-        <script type="text/javascript">
-            function readfile() {//根据经纬度信息显示兰伯特投影的中国版图
-                var inputfile = document.getElementById("filepick").files[0];
-                var reader = new FileReader();
-                reader.readAsText(inputfile);
-                reader.onload = function (e) {
-                    var text = reader.result.split("\r\n");
-                    var N = 0;
-                }
-            }
-            function Tobinary(k)//十进制转换为二进制
-            {
-                var s = new array;
-                var rem, i = 0, t = 0;
-                do {
-                    rem = k % 2;
-                    k = k / 2;
-                    s[i++] = rem;
-                } while (k != 0);   //当十进制数是0时也要进行一遍此循环，所以必须用do……while循环，而不是while循环
-                for (var j = --i; j >= 0; j--) {
-                    t += s[j] * Math.pow(10, j);
-                }
-                return t;
-            }
-            function four_decimal(b)//得到四进制m码
-            {
-                for (i = 0; i < 8; i++) {
-                    for (j = 0; j < 8; j++) {
-                        var m = Tobinary(i);
-                        var n = Tobinary(j);
-                        b[i][j] = 2 * m + n;
-                    }
-                }
-            }
-            function checkcombine_four(a, b)//合并处理
-            {
-                c[4] = [[0, 0], [0, 4], [4, 0], [4, 4]];
-                for (i = 0; i < 4; i++) {
-                    var w = 0;
-                    for (var m = c[i][0]; m < 4; m++) {
-                        for (var n = c[i][1]; n < 3; n++) {
-                            w += eq(a[m][n], a[m][n + 1]);
-                            if (w == 12)//16个值属性一样
-                            {
-                                for (m = c[i][0]; m < c[i][0] + 4; m++) {
-                                    for (n = c[i][1]; n < c[i][1] + 4; n++) {
-                                        b[m][n] = b[(c[i][0])][(c[i][1])];
-                                        (b[m][n] + 1) = 99999999;
-                                        (b[m][n] + 2) = 99999999;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    //第二层
-                    d[4] = [[0, 0], [0, 2], [2, 0], [2, 2]];
-                    e[4] = [[0, 4], [0, 6], [2, 4], [2, 6]];
-                    f[4] = [[4, 0], [4, 2], [6, 0], [6, 2]],
-                        g[4] = [[4, 4], [4, 6], [6, 4], [6, 6]];
-                    judge_four(a, b, d);
-                    judge_four(a, b, e);
-                    judge_four(a, b, f);
-                    judge_four(a, b, g);
-                }
+            <table width="400" height="400px" border="3">
+                    <caption >四叉树编码</caption>
+                <tr>
+                    <td style="text-align:center" width="30%">矩阵四叉树</td>
+                    <td id="shuju" style="text-align:left" width="70% " height="180px" >1, 1, 1, 1, 2, 2, 3, 3,<br>1, 1, 1, 1, 2, 2, 3, 3,<br>1, 1, 1, 1, 4, 4, 5, 5,<br>1, 1, 1, 1, 4, 4, 5, 5,<br>6, 6, 7, 8,13,13,14,14,<br>6, 6, 9,10,13,13,14,14,<br>11,11,12,12,15,16,19,19,<br>11,11,12,12,17,18,19,19</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center"colspan="2" height="40px" >
+                    <input type="button" style="width:100%;height:100%;font-size:13px;text-align:center" value = "编码转换"  onclick="show()"/></td>
+                </tr>
+                <tr>
+                    <td style="text-align:center" width="30%">转换结果</td>
+                    <td width="70% " id="result"></td>
+                </tr>
+                </table>
+    
+    <script type="text/javascript"> 
 
-            }
+    function zhuanhuan(k) {//将十进制转为二进制.
+            var s = new Array(10), rem, i = 0, t = 0;
+            do {
+                rem = k % 2;
+                k = parseInt(k / 2);
+                s[i++] = rem;
+            } while (k != 0);
 
-            function eq(m, n) {
-                if (m == n)
-                    return 1;
-                else
-                    return 0;
+            for (var j = --i; j >= 0; j--) {
+                t += s[j] * Math.pow(10.0, j);
             }
-
-            function judge_four(a, b, c) {
-                for (i = 0; i < 4; i++) {
-                    var w = 0;
-                    for (m = c[i][0]; m < c[i][0] + 2; m++)
-                        for (n = c[i][1]; n < c[i][1] + 1; n++)
-                            w += eq(a[m][n], a[m][n + 1]);
-                    if (w == 2)//4个值属性一样
-                    {
-                        for (m = c[i][0]; m < c[i][0] + 2; m++)
-                            for (n = c[i][1]; n < c[i][1] + 2; n++) {
-                                b[m][n] = b[(c[i][0])][(c[i][1])];
-                                (b[m][n] + 1) = (b[(c[i][0])][(c[i][1])] + 1);
-                                (b[m][n] + 2) = 99999999;
-                            }
-                    }
+            return t;
+        }
+        function four_decimal(b) {//四进制编码
+            for (var i = 0; i < 8; i++) {
+                for (var j = 0; j < 8; j++) {
+                    var m = zhuanhuan(i);
+                    var n = zhuanhuan(j);
+                    b[i][j] = 2 * m + n;
                 }
             }
-            function Change(m, n)
-            {
-                var t=new array;
-                var q;
-                for (i = 0; i < 8;i++)
-                for (j = 0; j < 8; j++)
+        }
+
+        function judge(a, b, c) //判断值是否相似
+        {
+            for (var i = 0; i < 4; i++) {
+                var w = 0;
+                for (var m = c[i][0]; m < c[i][0] + 2; m++)
+                    for (var n = c[i][1]; n < c[i][1] + 1; n++) {
+                        if (a[m][n] == a[m][n + 1]) 
+                        { w = w + 1; }
+                    }
+                if (w == 2)
                 {
+                    for (var m = c[i][0]; m < c[i][0] + 2; m++)
+                        for (var n = c[i][1]; n < c[i][1] + 2; n++) {
+                            b[m][n][0] = b[(c[i][0])][(c[i][1])][0];
+                            b[m][n][1] = b[(c[i][0])][(c[i][1])][1];
+                            b[m][n][2] = 99999999;
+                        }
+                }
+            }
+        }
+
+        function Change(m, n) //将四进制的M码按照规定格式输出.
+        {
+            var t = new Array(3);
+            var q;
+            for (var i = 0; i < 8; i++) {
+                for (var j = 0; j < 8; j++) {
                     q = m[i][j];
-                    t[0] = q / 100;
+                    t[0] = parseInt(q / 100);
                     q = q % 100;
-                    t[1] = q / 10;
+                    t[1] = parseInt(q / 10);
                     q = q % 10;
                     t[2] = q;
-                    n[i][j] = t;
-                    (n[i][j] + 1) = (t + 1);
-                    (n[i][j] + 2) = (t + 2);
+                    n[i][j][0] = t[0];
+                    n[i][j][1] = t[1];
+                    n[i][j][2] = t[2];
                 }
             }
+        }
 
-            function show(){
-                var a,b,c=new array;
-                var bb=new c;
-                a=[ 1, 1, 1, 1, 2, 2, 3, 3,
- 1, 1, 1, 1, 2, 2, 3, 3,
- 1, 1, 1, 1, 4, 4, 5, 5,
- 1, 1, 1, 1, 4, 4, 5, 5,
- 6, 6, 7, 8,13,13,14,14,
- 6, 6, 9,10,13,13,14,14,
-11,11,12,12,15,16,19,19,
-11,11,12,12,17,18,19,19];
-                four_decimal(b);
-                Change(b, bb);
-                checkcombine_four(a,bb);
-                alert(bb);
-
+        function hebing(a, b) //合并相同值
+        {
+            var c = [[0, 0], [0, 4], [4, 0], [4, 4]];
+            for (var i = 0; i < 4; i++) {
+                var w = 0;
+                for (var m = c[i][0]; m < 4; m++)
+                    for (var n = c[i][1]; n < 3; n++) {
+                        if (a[m][n] == a[m][n + 1]) { w = w + 1; }
+                    }
+                if (w == 12)
+                {
+                    for (var m = c[i][0]; m < c[i][0] + 4; m++)
+                        for (var n = c[i][1]; n < c[i][1] + 4; n++) {
+                            b[m][n][0] = b[(c[i][0])][(c[i][1])][0];
+                            b[m][n][1] = 99999999;
+                            b[m][n][2] = 99999999;
+                        }
+                }
             }
+            var d = [[0, 0], [0, 2], [2, 0], [2, 2]],
+                e = [[0, 4], [0, 6], [2, 4], [2, 6]],
+                f = [[4, 0], [4, 2], [6, 0], [6, 2]],
+                g = [[4, 4], [4, 6], [6, 4], [6, 6]];
+            judge(a, b, d);
+            judge(a, b, e);
+            judge(a, b, f);
+            judge(a, b, g);
+        }
+
+        function cal(a) {
+            for (var i = 0; i < 8; i++) {
+                for (var j = 0; j < 8; j++)
+                    if (a[i][j][1] == 99999999 && (a[i][j][2]) == 99999999) {
+                        document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + "(11111)"
+                        document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + a[i][j][0];
+                    }
+                    else if (a[i][j][2] == 99999999) {
+                        if (a[i][j][0] == 0) {
+                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + a[i][j][0] + "&nbsp&nbsp&nbsp&nbsp";
+                        }
+                        else {
+                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + a[i][j][0] + a[i][j][1] + "&nbsp&nbsp";
+                        }
+                    }
+                    else {
+                        if (a[i][j][0] == 0) {
+                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + a[i][j][0] + "&nbsp&nbsp&nbsp&nbsp";
+                        }
+                        else if (a[i][j][1] == 0) {
+                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + a[i][j][0] + a[i][j][1] + "&nbsp&nbsp";
+                        }
+                        else {
+                            document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + a[i][j][0] + a[i][j][1] + a[i][j][2] + "&nbsp&nbsp";
+                        }
+
+                    }
+                document.getElementById("result").innerHTML = document.getElementById("result").innerHTML + "<br>";
+            }
+        }
+        function temp() {//构建临时存储数组
+            a = new Array(8);
+            for (var i = 0; i < 8; i++) {
+                a[i] = new Array(8);
+            }
+            return a;
+        }
+        function show() {//最终结果
+            var str = document.getElementById("shuju").innerHTML;
+            var string = new Array();
+            string = str.split("<br>");
+            var a = new Array();
+            for (var x = 0; x < 8; x++) {
+                a[x] = string[x].split(",");
+                a[x].length = 8;
+            }
+            var b = temp();
+            var final = temp();
+            for (var i = 0; i < 8; i++) {
+                for (var j = 0; j < 8; j++)
+                    final[i][j] = new Array(3);
+            }
+
+            four_decimal(b);
+            Change(b, final);
+            hebing(a, final);
+            cal(final);
+        }
+    
+
+</script>
+</body>
+</html>
+
