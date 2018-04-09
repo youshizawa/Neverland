@@ -1,1 +1,380 @@
+<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<head>
+    <meta charset="utf-8">
+    <title>蜡笔小新之家</title>
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            font-size: 12px;
+        }
+        /*标题图*/
+
+        .header {
+            height: 180px;
+            clear: both;
+            width: 980px;
+            margin: auto;
+            margin-top: 7px;
+        }
+        /*导航菜单*/
+
+        .nav {
+            position: relative;
+            width: 980px;
+            height: 30px;
+            margin: 0 auto;
+        }
+
+        .nav ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .nav ul li {
+            float: left;
+            position: relative;
+            text-align: center;
+        }
+
+        .nav ul li a {
+            text-decoration: none;
+            color: #FFF;
+            background: hsl(0, 78%, 67%);
+            display: block;
+            padding: 0px 15px;
+            line-height: 30px;
+            height: 30px;
+            font-size: 15px;
+            width: 110px;
+        }
+
+        .nav ul li a:hover {
+            color: #FFF;
+            background: #FC0202
+        }
+
+        .nav ul li ul {
+            position: absolute;
+            display: none;
+        }
+
+        .nav ul li ul li {
+            float: none;
+            line-height: 30px;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .nav ul li ul li a {
+            width: 110px;
+        }
+
+        .nav ul li ul li a:hover {
+            background: #FC0202;
+        }
+
+        .nav ul li:hover ul {
+            display: block
+        }
+        /*新闻索引栏*/
+
+        .local {
+            width: 978px;
+            margin: auto;
+            overflow: hidden;
+            color: #888;
+            background: #FFF;
+            padding: 1px 0px 5px 0px;
+            border: 1px solid rgb(170, 168, 168);
+        }
+
+        .localcon {
+            width: 700px;
+            float: left;
+            margin-top: 8px;
+        }
+
+        .localcon a {
+            color: #444;
+            padding: 0px 4px;
+        }
+
+        .localcon a:hover {
+            color: #FC0202;
+        }
+
+        .localcon em {
+            color: #FC0202;
+            margin-left: 4px;
+        }
+        /*主要版块*/
+
+        #news {
+            width: 980px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        /*主栏目*/
+
+        .news_l {
+            background: #FFF;
+            width: 768px;
+            float: left;
+            overflow: hidden;
+            border-left: 1px solid rgb(170, 168, 168);
+            border-right: 1px solid rgb(170, 168, 168);
+            border-bottom: 1px solid rgb(170, 168, 168);
+        }
+
+        .news {
+            width: 770px;
+            overflow: hidden;
+        }
+
+        .news h1 {
+            color: #f83c31;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 14px;
+        }
+
+        .news .intro {
+            text-align: center;
+            padding-top: 0px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #E6E5E5;
+            margin-bottom: 5px;
+        }
+
+        .news .intro span {
+            display: inline;
+            padding: 0 14px;
+            color: #999;
+        }
+
+        .news p {
+            color: rgb(0, 0, 0);
+            font-size: 14px;
+            line-height: 30px;
+            padding-bottom: 5px;
+        }
+        /*侧边栏*/
+
+        .news_r {
+            /*侧边栏*/
+            width: 208px;
+            float: left;
+            background: #FFF;
+            border-left: 1px solid rgb(170, 168, 168);
+            border-right: 1px solid rgb(170, 168, 168);
+            border-bottom: 1px solid rgb(170, 168, 168);
+        }
+
+        .hour {
+            width: 208px;
+            overflow: hidden;
+            border-bottom: 1px solid rgb(170, 168, 168);
+        }
+
+        .hour ul {
+            width: 208px;
+            overflow: hidden;
+            margin-top: 3px;
+            padding: 0;
+        }
+
+        .hour ul li {
+            width: 208px;
+            height: 33px;
+            overflow: hidden;
+            float: left;
+            padding: 0;
+        }
+
+        .hour ul li a:hover {
+            color: #f83c31;
+        }
+
+        .review {
+            width: 208px;
+            border-top: rgb(170, 168, 168);
+            margin-bottom: 20px;
+        }
+
+        .review ul {
+            width: 208px;
+            overflow: hidden;
+            margin-top: 3px;
+            padding: 0;
+        }
+
+        .review ul li {
+            width: 208px;
+            height: 48px;
+            overflow: hidden;
+            float: left;
+            padding: 0;
+        }
+
+        .review ul li a:hover {
+            color: #f83c31;
+        }
+        /*底部介绍*/
+
+        .footer {
+            border-top: rgb(0, 0, 0) solid 1px;
+            margin-top: 40px;
+            background-color: #f83c31;
+            text-align: center;
+            height: 20px;
+            font-size: 15px;
+            color: #E6E5E5;
+        }
+        /*返回顶部*/
+
+        #myBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            border: none;
+            outline: none;
+            height: 112px;
+            width: 112px;
+            background-image: url(https://img3.doubanio.com/view/note/l/public/p49709615.webp);
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        #myBtn:hover {
+            background-image: url(https://img3.doubanio.com/view/note/l/public/p49709615.webp);
+        }
+    </style>
+</head>
+
+<body background="https://img3.doubanio.com/view/note/l/public/p49709605.webp">
+    <div id="header">
+        <div style="text-align:center; position:relative"><a href="#"><img src="https://img1.doubanio.com/view/note/l/public/p49709618.webp"  border="0"></a></div>
+    </div>
+
+    <div class="nav">
+        <ul>
+            <li> <a href="#">首页</a>
+            </li>
+            <li> <a href="#">在线观看</a>
+                <ul>
+                    <li><a href="#">漫画连载</a></li>
+                    <li><a href="https://v.qq.com/x/search/?q=%E8%9C%A1%E7%AC%94%E5%B0%8F%E6%96%B0%E5%85%A8%E9%9B%86%E4%B8%AD%E6%96%87%E7%89%88&stag=9">番剧连载</a></li>
+                    <li><a href="#">历年剧场版</a></li>
+                </ul>
+            </li>
+            <li> <a href="#">新闻中心</a>
+            </li>
+            <li> <a href="#">精彩活动</a>
+                <ul>
+                    <li><a href="#">限时联动</a></li>
+                    <li><a href="#">线下活动</a></li>
+                </ul>
+            </li>
+            <li> <a href="#">百科全书</a>
+                <ul>
+                    <li><a href="#">关于角色</a></li>
+                    <li><a href="#">关于剧情</a></li>
+                    <li><a href="#">关于作者</a></li>
+                </ul>
+            </li>
+            <li> <a href="#">蜡笔商城</a>
+                <ul>
+                    <li><a href="#">实体书籍</a></li>
+                    <li><a href="#">手办扭蛋</a></li>
+                    <li><a href="#">休闲零食</a></li>
+                </ul>
+            </li>
+            <li> <a href="#">资源下载</a>
+                <ul>
+                    <li><a href="#">壁纸图片</a></li>
+                    <li><a href="#">原声音乐</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="local">
+        <div class="localcon">
+            <a href="#">新闻首页</a> &gt; <a href="#">电影资讯</a> &gt; 正文
+        </div>
+    </div>
+    <div id="news">
+        <div class="news_l">
+            <div class="news">
+                <h1>《蜡笔小新》剧场版最新预告 吃碗拉面顺便拯救世界</h1>
+                <div class="intro">
+                    <span>2018-03-04 </span><span>来源：蜡笔小新日本官网</span><span>编辑：喜欢野原新之助的小周</span>
+                </div>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日本国民级动画《蜡笔小新》每年都会推出一部剧场版动画。第26部剧场版《蜡笔小新：爆盛！功夫男孩～拉面大乱～》已确定将于2018年4月13日在日本上映。日前该剧场版公布了最新的视觉图、新角色以及预告视频。</p>
+                <p style="text-align: center;"><img src="http://inews.gtimg.com/newsapp_match/0/2160399995/0" title="">&#8203;</a>
+                </p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在剧场版《蜡笔小新：爆盛！功夫男孩～拉面大乱～》中，故事以春日部的中华街为舞台，描绘小新和春日部防卫队的活跃姿态，小新还将挑战中国功夫。新视觉图中可以看到身穿功夫马褂的春日部防卫队队员们。</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该剧场版最新的预告视频时长超过1分半钟，预告中可以看到小新与春日部防卫队的同伴来到中华街，并与功夫娘玉兰一起练习“弹弹拳”。然而在这条中华街上突然出现了一种迷之蓝面，人吃了之后就会变得像丧尸一样凶暴化，到处进行攻击。街上的民众们突然惨遭邪恶拉面控制，为此春日部防卫队出动，与拉面大王展开战斗!</p>
+                <p style="text-align: center;"><img src="http://newsimg.5054399.com/uploads/userup/1803/0210145H119.jpg" title="">&#8203;</a>
+                </p>
+            </div>
+        </div>
+        <div class="news_r">
+            <div class="hour">
+                <h2>
+                    <b> &nbsp;情报速递</b> <a href="#" style="font-size:14px;">(更多)</a>
+                </h2>
+                <ul>
+                    <li><a href="#">&nbsp;《蜡笔小新》海报预告双发 小崎登场笑料不断</a></li>
+                    <li><a href="#">&nbsp;蜡笔小新剧场版见面会 MAYUYU大胆告白</a></li>
+                    <li><a href="#">&nbsp;《蜡笔小新》2018剧场版曝新预告 贱萌小新耍中国功夫</a></li>
+                    <li><a href="#">&nbsp;动漫迷注意!全新「蜡笔小新期间限定主题餐厅」来势汹汹</a></li>
+                    <li><a href="#">&nbsp;剧场版动画《蜡笔小新》女主确定 中国功夫拯救街道</a></li>
+                </ul>
+            </div>
+            <div class=review>
+                <h2>
+                    <b> &nbsp;企划SP</b> <a href="#" style="font-size:14px;">(更多)</a>
+                </h2>
+                <ul>
+                    <li><a href="#"><img src="https://img3.doubanio.com/view/note/l/public/p49709603.webp" style="width:208px; height:48px " ></a></li>
+                    <li><a href="#"><img src="https://img1.doubanio.com/view/note/l/public/p49709607.webp" style="width:208px; height:48px" ></a></li>
+                    <li><a href="#"><img src="https://img1.doubanio.com/view/note/l/public/p49709609.webp" style="width:208px; height:48px" ></a></li>
+                    <li><a href="#"><img src="https://img3.doubanio.com/view/note/l/public/p49709610.webp" style="width:208px; height:48px" ></a></li>
+                    <li><a href="#"><img src="https://img3.doubanio.com/view/note/l/public/p49709611.webp" style="width:208px; height:48px" ></a></li>
+                    <li><a href="#"><img src="https://img3.doubanio.com/view/note/l/public/p49709616.webp" style="width:208px; height:48px" ></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <button onclick="topFunction()" id="myBtn" title="回顶部"></button> 
+    <div class="footer">
+        Copyright@<a href="https://weibo.com/u/5853680827?nick=%E5%91%A8%E7%81%AD%E7%81%AD">周灭灭</a> &nbsp;&nbsp;&nbsp;个人自制，自娱自乐，爱小新一辈子QAQ
+    </div>
+</body>
+<script>
+
+    window.onscroll = function() {scrollFunction()};
+    function scrollFunction() {console.log(121); 
+        if (document.body.scrollTop > 15 || document.documentElement.scrollTop >20) { 
+            document.getElementById("myBtn").style.display = "block"; 
+        }
+         else { 
+             document.getElementById("myBtn").style.display= "none"; } 
+            } 
+         
+         function topFunction() { 
+             document.body.scrollTop = 0; 
+             document.documentElement.scrollTop = 0;
+        }
+</script>
+
+</html>
